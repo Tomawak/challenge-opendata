@@ -237,8 +237,10 @@ var margin = {top: 80, right: 0, bottom: 10, left: 80},
 
 var x = d3.scale.ordinal().rangeBands([0, width]),
     z = d3.scale.linear().domain([0, 4]).clamp(true),
-    c = d3.scale.category10().domain(d3.range(10));
-
+   // c = d3.scale.ordinal();
+    c = d3.scale.category10();//.domain(d3.range(10));
+    
+    
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -246,9 +248,9 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("miserables.json", function(miserables) {
+d3.json("deputeExemple.json", function(deputes) {
   var matrix = [],
-      nodes = miserables.nodes,
+      nodes = deputes.depute,
       n = nodes.length;
 
   // Compute index per node.
@@ -259,7 +261,7 @@ d3.json("miserables.json", function(miserables) {
   });
 
   // Convert links to matrix; count character occurrences.
-  miserables.links.forEach(function(link) {
+  deputes.links.forEach(function(link) {
     matrix[link.source][link.target].z += link.value;
     matrix[link.target][link.source].z += link.value;
     matrix[link.source][link.source].z += link.value;
@@ -272,7 +274,7 @@ d3.json("miserables.json", function(miserables) {
   var orders = {
     name: d3.range(n).sort(function(a, b) { return d3.ascending(nodes[a].name, nodes[b].name); }),
     count: d3.range(n).sort(function(a, b) { return nodes[b].count - nodes[a].count; }),
-    group: d3.range(n).sort(function(a, b) { return nodes[b].group - nodes[a].group; })
+    parti: d3.range(n).sort(function(a, b) { return nodes[b].parti - nodes[a].parti; })
   };
 
   // The default sort order.
@@ -324,8 +326,8 @@ d3.json("miserables.json", function(miserables) {
         .attr("x", function(d) { return x(d.x); })
         .attr("width", x.rangeBand())
         .attr("height", x.rangeBand())
-        .style("fill-opacity", function(d) { return z(d.z); })
-        .style("fill", function(d) { return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : null; })
+        .style("fill-opacity", function(d) {console.log(d.z+' '+z(d.z)); return 1;/*z(d.z);*/ })
+        .style("fill", function(d) { return nodes[d.x].parti == nodes[d.y].parti ? c(nodes[d.x].parti) : null; })
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
   }
@@ -362,7 +364,7 @@ d3.json("miserables.json", function(miserables) {
   }
 
   var timeout = setTimeout(function() {
-    order("group");
+    order("parti");
     d3.select("#order").property("selectedIndex", 2).node().focus();
   }, 5000);
 });
