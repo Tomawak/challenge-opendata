@@ -278,7 +278,7 @@ d3.json("deputeExemple.json", function(deputes) {
   };
 
   // The default sort order.
-  x.domain(orders.name);
+  x.domain(orders.parti);
 
   svg.append("rect")
       .attr("class", "background")
@@ -341,7 +341,7 @@ d3.json("deputeExemple.json", function(deputes) {
     d3.selectAll("text").classed("active", false);
   }
 
-  d3.select("#order").on("change", function() {
+  /*d3.select("#order").on("change", function() {
     clearTimeout(timeout);
     order(this.value);
   });
@@ -366,7 +366,7 @@ d3.json("deputeExemple.json", function(deputes) {
   var timeout = setTimeout(function() {
     order("parti");
     d3.select("#order").property("selectedIndex", 2).node().focus();
-  }, 5000);
+  }, 5000);*/
 });
 
 </script>
