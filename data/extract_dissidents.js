@@ -4,6 +4,7 @@ Object.prototype.forEach = function(callback){
 
 var fs = require('fs');
 var util = require('util');
+var sqlaccess = require('./sqlaccess');
 var dataVotes = JSON.parse(fs.readFileSync('data_files/Scrutins_XIV.json', 'utf8'));
 var dataDeputes = JSON.parse(fs.readFileSync('data_files/AMO10_deputes_actifs_mandats_actifs_organes_XIV.json', 'utf8'));
 
@@ -36,7 +37,7 @@ organes_deputes.forEach(function(x){
 function treatNominatif(list,vote_id,vote) {
 	if(list) {
 		list.votant.forEach(function(x){
-			console.log(x.acteurRef+":"+vote_id+":"+vote)
+			sqlaccess.addVote(x.acteurRef.substring(2),vote_id,vote);
 		})
 	}
 }
@@ -60,7 +61,7 @@ function treatPositionGroupe(groupeID,vote_id,vote,dissidents) {
 		map_organe[groupeID].filter(function(x){
 			return dissidents.indexOf(x) == -1
 		}).forEach(function(depute){
-			console.log(depute+":"+vote_id+":"+vote_db_name)
+			sqlaccess.addVote(depute.substring(2),vote_id,vote_db_name);
 		})
 	}
 }
@@ -90,11 +91,13 @@ dataVotes.scrutins.scrutin.filter(function(x){
 
 
 
-		treatPositionGroupe(groupe.organeRef,vote.uid,groupe.vote.positionMajoritaire,dissidents)
+		treatPositionGroupe(groupe.organeRef,vote.numero,groupe.vote.positionMajoritaire,dissidents)
 
-		treatNominatif(groupe.vote.decompteNominatif.nonVotants,vote.uid,"NONVOTING")
-		treatNominatif(groupe.vote.decompteNominatif.pours,vote.uid,"FOR")
-		treatNominatif(groupe.vote.decompteNominatif.contres,vote.uid,"AGAINST")
-		treatNominatif(groupe.vote.decompteNominatif.abstentions,vote.uid,"ABSTAINED")
+		treatNominatif(groupe.vote.decompteNominatif.nonVotants,vote.numero,"NONVOTING")
+		treatNominatif(groupe.vote.decompteNominatif.pours,vote.numero,"FOR")
+		treatNominatif(groupe.vote.decompteNominatif.contres,vote.numero,"AGAINST")
+		treatNominatif(groupe.vote.decompteNominatif.abstentions,vote.numero,"ABSTAINED")
 	})
 })
+
+sqlaccess.saveVotes();
