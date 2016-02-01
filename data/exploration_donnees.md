@@ -16,7 +16,7 @@ Ouvrez `node` (https://nodejs.org/en/download/package-manager/) puis :
 	};
 	//chargement d'un fichier json
 	var fs = require('fs');
-	var data = JSON.parse(fs.readFileSync('data/Scrutins_XIV.json', 'utf8'));
+	var data = JSON.parse(fs.readFileSync('data_files/Scrutins_XIV.json', 'utf8'));
 	//exploration du fichier
 	data.scrutins.scrutin[0]
 	data.scrutins.scrutin[0].typeVote.typeMajorite
@@ -39,6 +39,7 @@ export.acteurs.acteur[0].etatCivil.infoNaissance.dateNais : '1964-06-23'
 export.acteurs.acteur[0].profession.libelleCourant : 'Chef d\'entreprise'
 export.acteurs.acteur[0].profession.socProcINSEE.catSocPro : 'Cadres supérieurs (secteur privé)'
 export.acteurs.acteur[0].profession.socProcINSEE.famSocPro : 'Cadres et ingénieurs'
+export.acteurs.acteur[0].mandats.mandat[0].mandature.datePriseFonction : '2014-07-30'
 ```
 
 Table 'votes' : depuis Scrutins_XIV.json
