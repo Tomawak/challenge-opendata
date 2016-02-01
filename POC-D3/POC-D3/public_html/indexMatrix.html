@@ -19,6 +19,10 @@ line {
   stroke: #fff;
 }
 
+rect.active {
+  fill: red;
+}
+
 text.active {
   fill: red;
 }
@@ -134,18 +138,23 @@ d3.json("deputeExemple.json", function(deputes) {
         .attr("width", x.rangeBand())
         .attr("height", x.rangeBand())
         .style("fill-opacity", function(d) { return d.x==d.y ? nombreDeVote :  z(d.z)  ; }) 
-        .style("fill", function(d) { return d.x==d.y ? "#ffffff" : null; })
+        .style("fill", function(d) { return d.x==d.y ? "white" : null; })
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
   }
 
   function mouseover(p) {
     d3.selectAll(".row text").classed("active", function(d, i) { return i == p.y; });
+    d3.selectAll(".row rect") .style("stroke-width",3);
+    d3.selectAll(".row rect").style("stroke",function(d) {return  d.y==p.y && d.x==p.x ? "yellow" : "null"/*(d.x==d.y ? "white": "black")*/;}); 
     d3.selectAll(".column text").classed("active", function(d, i) { return i == p.x; });
+    
   }
 
   function mouseout() {
     d3.selectAll("text").classed("active", false);
+    d3.selectAll("rect").classed("active", false);
+    d3.selectAll(".row rect").style("stroke",null);
   }
 
   /*d3.select("#order").on("change", function() {
