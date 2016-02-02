@@ -1,6 +1,6 @@
 
 
-var nombreDeVote = 10;
+var nombreDeVote = 15;
 
 var margin = {top: 80, right: 0, bottom: 10, left: 80},
   width = 720,
@@ -16,7 +16,10 @@ var svg = d3.select("body").append("svg")
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); //permet la translation
 
-d3.json("deputeExemple.json", function(deputes) {
+d3.xhr("http://localhost:3000/server/public/similarity.json").get( function(err,rep) {
+    if ( err ) alert('error');
+    var deputes = JSON.parse(rep.response);
+   
   var matrix = [],
       nodes = deputes.depute,
       n = nodes.length;
@@ -29,6 +32,7 @@ d3.json("deputeExemple.json", function(deputes) {
 
   // Convert links to matrix; count character occurrences.
   deputes.links.forEach(function(link) {
+      console.log(link);
     matrix[link.source][link.target].z += link.value;
     matrix[link.target][link.source].z += link.value;
     matrix[link.source][link.source].z = nombreDeVote;
@@ -47,7 +51,8 @@ d3.json("deputeExemple.json", function(deputes) {
   svg.append("rect")
       .attr("class", "background")
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
+      .style("stroke","black");
 
   var row = svg.selectAll(".row")
       .data(matrix)
@@ -64,7 +69,7 @@ d3.json("deputeExemple.json", function(deputes) {
       .attr("y", x.rangeBand() / 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "end")
-      .text(function(d, i) { return nodes[i].name; });
+      .text(function(d, i) { return" "; /* nodes[i].name;*/ });
 
   var column = svg.selectAll(".column")
       .data(matrix)
@@ -80,7 +85,7 @@ d3.json("deputeExemple.json", function(deputes) {
       .attr("y", x.rangeBand() / 2)
       .attr("dy", ".32em")
       .attr("text-anchor", "start")
-      .text(function(d, i) { return nodes[i].name; });
+      .text(function(d, i) { return" "; /* nodes[i].name;*/ });
 
   function row(row) {
     var cell = d3.select(this).selectAll(".cell")
@@ -90,7 +95,7 @@ d3.json("deputeExemple.json", function(deputes) {
         .attr("x", function(d) { return x(d.x); })
         .attr("width", x.rangeBand())
         .attr("height", x.rangeBand())
-        .style("fill-opacity", function(d) { return d.x==d.y ? nombreDeVote :  z(d.z)  ; })
+        .style("fill-opacity", function(d) { return 1;/*return d.x==d.y ? nombreDeVote :  z(d.z)  ;*/ })
         .style("fill", function(d) { return d.x==d.y ? "white" : null; })
         .on("mouseover", mouseover)
         .on("mouseout", mouseout);
