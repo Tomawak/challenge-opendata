@@ -3,7 +3,7 @@ var connectionConfig = {
 	user: 'postgres',
 	password: 'password',
 	database: 'cod',
-	host: 'localhost',
+	host: '129.88.57.46',
 	port: 8001
 };
 
