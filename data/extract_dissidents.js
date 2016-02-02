@@ -37,7 +37,7 @@ organes_deputes.forEach(function(x){
 function treatNominatif(list,vote_id,vote) {
 	if(list) {
 		list.votant.forEach(function(x){
-			sqlaccess.addVote(x.acteurRef.substring(2),vote_id,vote);
+			sqlaccess.addVote(x.acteurRef.substring(2),vote_id,vote,true);
 		})
 	}
 }
@@ -61,7 +61,7 @@ function treatPositionGroupe(groupeID,vote_id,vote,dissidents) {
 		map_organe[groupeID].filter(function(x){
 			return dissidents.indexOf(x) == -1
 		}).forEach(function(depute){
-			sqlaccess.addVote(depute.substring(2),vote_id,vote_db_name);
+			sqlaccess.addVote(depute.substring(2),vote_id,vote_db_name,false);
 		})
 	}
 }

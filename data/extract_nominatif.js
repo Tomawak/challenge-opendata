@@ -43,8 +43,7 @@ function voteExtraction(elt,vote,numero_scrutin) {
 		// si l'acteur n'est pas repété, on l'insère
 		if (tab.length==0) {
 			var cuted_acteur_ref = elt.acteurRef.substring(2);
-//			console.log("Depute= "+elt.acteurRef+ " ,Scrutin="+ numero_scrutin +", vote= "+vote); 
-			sqlaccess.addVote(cuted_acteur_ref,numero_scrutin,vote);
+			sqlaccess.addVote(cuted_acteur_ref,numero_scrutin,vote,true);
 			actors.push({"actor" : elt.acteurRef,"vote":vote});
 			counter = counter+1;
 		}
@@ -55,7 +54,6 @@ function scrutinDecomp(elt_scrutin) {
 	actors = [];
 	if(elt_scrutin.modePublicationDesVotes == "DecompteNominatif") {
 		elt_scrutin.ventilationVotes.organe.groupes.groupe.forEach(function (x) {groupeDecomp(x,elt_scrutin.numero);});
-		//votes = votes +1;
 	}
 }
 data.scrutins.scrutin.forEach(scrutinDecomp);

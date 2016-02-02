@@ -34,6 +34,7 @@ CREATE TABLE votes (
 	id_depute INTEGER REFERENCES deputes,
 	id_ballot INTEGER REFERENCES ballots,
 	choice choice_vote,
+	is_nominative BOOLEAN,
 	PRIMARY KEY(id_depute,id_ballot)
 );
 

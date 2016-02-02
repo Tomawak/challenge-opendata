@@ -23,11 +23,12 @@ exports.addDepute = function(id,prenom,nom,isMale,dateNais,profession,catSocPro,
 		famSocPro]);
 }
 
-exports.addVote = function(idDepute,idBallot,vote) {
+exports.addVote = function(idDepute,idBallot,vote,isNominatif) {
 	votes.push([
 		idDepute,
 		idBallot,
-		vote
+		vote,
+		isNominatif
 	]);
 }
 
@@ -70,7 +71,7 @@ exports.saveDeputes = function() {
 };
 
 exports.saveVotes = function() {
-	saveInDB("INSERT INTO votes VALUES ($1,$2,$3)",votes);
+	saveInDB("INSERT INTO votes VALUES ($1,$2,$3,$4)",votes);
 }
 
 exports.saveBallots = function() {
