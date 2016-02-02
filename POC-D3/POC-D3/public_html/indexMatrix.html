@@ -6,13 +6,21 @@ and open the template in the editor.
 -->
 <html>
     <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
         <title>OpenData</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/style.css" />
-
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
+    <div class="container">
+      <section class="row">
         <h1>Classement des députés en fonction de leurs votes</h1>
         <p>Plusieurs classements sont possibles dans cette représentation.</p>
         <aside style="margin-top:80px" id="selection">
@@ -24,8 +32,16 @@ and open the template in the editor.
             </select>
           </p>
         </aside>
-        <script type="text/javascript" src="d3.min.js"></script>
-        <script src="bootstrap.min.js"></script>
-        <script src="js/matrix.js"></script>
+      </section>
+
+      <script type="text/javascript" src="d3.min.js"></script>
+      <script src="bootstrap/js/jquery.js"></script>
+      <script src="bootstrap/js/bootstrap.min.js"></script>
+
+      <section class="row">
+        <div><script type="text/javascript" src="js/matrix.js"></script></div>
+        <div class="details"><img src="test.jpg"></div>
+      </section>
+    </div>
     </body>
 </html>

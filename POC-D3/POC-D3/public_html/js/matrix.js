@@ -131,8 +131,4 @@ d3.json("deputeExemple.json", function(deputes) {
         .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
   }
 
-  /*var details = d3.select("body").append("div")
-        .attr("class", "details")
-        .attr("width", width - margin.left - margin.right)
-        .attr("height", height);*/
 });
