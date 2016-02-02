@@ -3,7 +3,7 @@
 	var fs = require('fs');
 	var data = JSON.parse(fs.readFileSync('data_files/Scrutins_XIV.json','utf8'));
 	var util = require('util');
-	var sqlaccess = require('./sqlaccess_test.js');
+	var sqlaccess = require('./sqlaccess.js');
 	var counter = 0;
 	var votes =0;
 	var actors = [];
