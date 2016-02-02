@@ -1,6 +1,12 @@
 var pg = require('pg');
 var fs = require('fs');
-var connectionString = "postgres://postgres:password@localhost/cod";
+var connectionConfig = {
+	user: 'postgres',
+	password: 'password',
+	database: 'cod',
+	host: '129.88.57.46',
+	port: 8001
+};
 //ajouter correctement
 
 var position = {};
@@ -10,7 +16,7 @@ var compt =0;
 var finalResult ={};
 
 function getDeputes() {
-    pg.connect(connectionString, function(err, client, done) {
+    pg.connect(connectionConfig, function(err, client, done) {
 	if(err) {
 	    return console.error('error fetching client from pool', err);
 	}
@@ -31,21 +37,21 @@ function getDeputes() {
                 compt++;
                 
             });
-            client.end();
-            getSimilarite();
+            //console.log(position);
+            getSimilarity();
             
             
 	});
     });
 }
 
-function getSimilarite() {
-    pg.connect(connectionString, function(err, client, done) {
+function getSimilarity() {
+    pg.connect(connectionConfig, function(err, client, done) {
 	if(err) {
 	    return console.error('error fetching client from pool', err);
 	}
         //ajouter parti
-	client.query("SELECT s.id_depute_a, s.id_depute_b, s.similarite  FROM Similarite s;", function(err, result) {
+	client.query("SELECT s.id_depute_a, s.id_depute_b, s.similarity  FROM Similarity s;", function(err, result) {
 	    //call `done()` to release the client back to the pool
 	    done();
 	    if(err) {
@@ -55,7 +61,7 @@ function getSimilarite() {
                 links.push({
                     "source":position[row.id_depute_a],
                     "target":position[row.id_depute_b],
-                    "value":row.similarite
+                    "value":row.similarity
                 });
             });
             finalResult = {
