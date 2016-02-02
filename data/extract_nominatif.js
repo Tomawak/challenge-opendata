@@ -13,11 +13,6 @@ Object.prototype.forEach = function(callback) {
 
 function groupeDecomp(elt,numero_scrutin) {
 // pour chaque groupe
-	if(elt.vote.decompteNominatif.nonVotants) {
-		elt.vote.decompteNominatif.nonVotants.votant.forEach(function (x) {
-			voteExtraction(x,"NONVOTING",numero_scrutin);
-		});
-	}
 	if(elt.vote.decompteNominatif.pours) {
 		elt.vote.decompteNominatif.pours.votant.forEach(function (x) {
 			voteExtraction(x,"FOR",numero_scrutin);

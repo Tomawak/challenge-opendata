@@ -84,7 +84,6 @@ dataVotes.scrutins.scrutin.filter(function(x){
 
 
 		var dissidents = [];
-		addDissidents(dissidents,groupe.vote.decompteNominatif.nonVotants);
 		addDissidents(dissidents,groupe.vote.decompteNominatif.pours);
 		addDissidents(dissidents,groupe.vote.decompteNominatif.contres);
 		addDissidents(dissidents,groupe.vote.decompteNominatif.abstentions);
@@ -93,7 +92,6 @@ dataVotes.scrutins.scrutin.filter(function(x){
 
 		treatPositionGroupe(groupe.organeRef,vote.numero,groupe.vote.positionMajoritaire,dissidents)
 
-		treatNominatif(groupe.vote.decompteNominatif.nonVotants,vote.numero,"NONVOTING")
 		treatNominatif(groupe.vote.decompteNominatif.pours,vote.numero,"FOR")
 		treatNominatif(groupe.vote.decompteNominatif.contres,vote.numero,"AGAINST")
 		treatNominatif(groupe.vote.decompteNominatif.abstentions,vote.numero,"ABSTAINED")
