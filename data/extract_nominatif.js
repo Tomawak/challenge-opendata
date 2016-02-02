@@ -3,6 +3,7 @@
 	var fs = require('fs');
 	var data = JSON.parse(fs.readFileSync('data_files/Scrutins_XIV.json','utf8'));
 	var util = require('util');
+	var sqlaccess = require('./sqlaccess_test.js');
 	var counter = 0;
 	var votes =0;
 	var actors = [];
@@ -14,7 +15,7 @@ function groupeDecomp(elt,numero_scrutin) {
 // pour chaque groupe
 	if(elt.vote.decompteNominatif.nonVotants) {
 		elt.vote.decompteNominatif.nonVotants.votant.forEach(function (x) {
-			voteExtraction(x,"NONVOTANT",numero_scrutin);
+			voteExtraction(x,"NONVOTING",numero_scrutin);
 		});
 	}
 	if(elt.vote.decompteNominatif.pours) {
@@ -29,11 +30,9 @@ function groupeDecomp(elt,numero_scrutin) {
 	} 
 	if(elt.vote.decompteNominatif.abstentions) {
 		elt.vote.decompteNominatif.abstentions.votant.forEach(function (x) {
-			voteExtraction(x,"ABSTENTION",numero_scrutin);
+			voteExtraction(x,"ABSTAINED",numero_scrutin);
 		});
 	}
-//elt.vote.decompteNominatif.contres.foreach(vote_extraction(,"AGAINST"))
-//elt.vote.decompteNominatif.abstentions.foreach(vote_extraction(,"ABSTENTION"))
 }
 
 function voteExtraction(elt,vote,numero_scrutin) {
@@ -43,7 +42,9 @@ function voteExtraction(elt,vote,numero_scrutin) {
 		});
 		// si l'acteur n'est pas repété, on l'insère
 		if (tab.length==0) {
-			console.log("Depute= "+elt.acteurRef+ " ,Scrutin="+ numero_scrutin +", vote= "+vote); 
+			var cuted_acteur_ref = elt.acteurRef.substring(2);
+//			console.log("Depute= "+elt.acteurRef+ " ,Scrutin="+ numero_scrutin +", vote= "+vote); 
+			sqlaccess.addVote(cuted_acteur_ref,numero_scrutin,vote);
 			actors.push({"actor" : elt.acteurRef,"vote":vote});
 			counter = counter+1;
 		}
@@ -53,24 +54,11 @@ function voteExtraction(elt,vote,numero_scrutin) {
 function scrutinDecomp(elt_scrutin) {
 	actors = [];
 	if(elt_scrutin.modePublicationDesVotes == "DecompteNominatif") {
-		elt_scrutin.ventilationVotes.organe.groupes.groupe.forEach(function (x) {qgroupeDecomp(x,elt_scrutin.numero);});
+		elt_scrutin.ventilationVotes.organe.groupes.groupe.forEach(function (x) {groupeDecomp(x,elt_scrutin.numero);});
 		//votes = votes +1;
 	}
 }
 data.scrutins.scrutin.forEach(scrutinDecomp);
-
-	
-/*data.scrutins.scrutin
-.filter(function(x) {
-	return x.modePublicationDesVotes == "DecompteNominatif"
-})
-.forEach(function(scrutin) {
-	scrutin.ventilationVotes.organe.groupes.groupe.forEach(function (x) {
-		groupeDecomp(x,scrutin.numero)
-	});
-});*/
+sqlaccess.saveVotes();
 
 
-//data.scrutins.scrutin[1160].ventilationVotes.organe.groupes.groupe.forEach(function (x) {groupeDecomp(x,1156)});
-
-//console.log(counter);
