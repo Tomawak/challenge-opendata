@@ -35,22 +35,32 @@ html {
 
 svg {
   font: 10px sans-serif;
-}</style>
+}
+
+.details {
+  margin-top: 100px;
+  margin-bottom: 100px;
+  border: 1px;
+  border-color: black;
+  border-style: solid;
+}
+</style>
 
     </head>
     <body>
         <h1>Classement des députés en fonction de leurs votes</h1>
         <p>Plusieurs classements sont possibles dans cette représentation.</p>
-        <aside style="margin-top:80px">
+        <aside style="margin-top:80px" id="selection">
           <p>
             Ordonner par:
-            <select id="order">
+            <select name="order "id="order">
               <option value="name">Nom</option>
-              <option value="parti">Parti</option>
+              <option value="parti" selected>Parti</option>
             </select>
           </p>
         </aside>
         <script type="text/javascript" src="d3.min.js"></script>
+        <script src="bootstrap.min.js"></script>
         <script>
 
 var margin = {top: 80, right: 0, bottom: 10, left: 80},
@@ -159,14 +169,13 @@ d3.json("deputeExemple.json", function(deputes) {
   }
 
   d3.select("#order").on("change", function() {
-    //clearTimeout(timeout);
     order(this.value);
   });
 
   function order(value) {
     x.domain(orders[value]);
 
-    var t = svg.transition().duration(2500);
+    var t = svg.transition().duration(2000);
 
     t.selectAll(".row")
         .delay(function(d, i) { return x(i) * 4; })
@@ -180,10 +189,10 @@ d3.json("deputeExemple.json", function(deputes) {
         .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
   }
 
-  /*var timeout = setTimeout(function() {
-    order("parti");
-    d3.select("#order").property("selectedIndex", 2).node().focus();
-  }, 5000);*/
+  /*var details = d3.select("body").append("div")
+        .attr("class", "details")
+        .attr("width", width - margin.left - margin.right)
+        .attr("height", height);*/
 });
 
 </script>
