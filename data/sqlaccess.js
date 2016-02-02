@@ -1,9 +1,16 @@
 var pg = require('pg');
-var connectionString = "postgres://postgres:password@localhost/cod";
+var connectionConfig = {
+	user: 'postgres',
+	password: 'password',
+	database: 'cod',
+	host: '129.88.57.46',
+	port: 8001
+};
 
 var votes = [];
 var deputes = [];
 var ballots = [];
+var failures = [];
 
 exports.addDepute = function(id,prenom,nom,isMale,dateNais,profession,catSocPro,famSocPro) {
 	deputes.push([id,
@@ -35,19 +42,22 @@ exports.addBallot = function(id,date,isAdopted,name){
 
 function saveInDB(requestString,values) {
 	var valuesAdded = 0;
-	pg.connect(connectionString, function(err, client, done) {
+	pg.connect(connectionConfig, function(err, client, done) {
 		if(err) {
 			return console.error('error fetching client from pool', err);
 		}
 		values.forEach(function(value){
 			client.query(requestString,value, function(err, result) {
-				//call `done()` to release the client back to the pool
-				done();
 				if(err) {
+					failures.push(value)
 					return console.error('error running query', err);
 				}
 				valuesAdded=valuesAdded+1;
 				if(values.length===valuesAdded) {
+					if(failures.length>0) {
+						console.log("Insertion failed for those values :")
+						console.log(JSON.stringify(failures))
+					}
 					client.end();
 				}
 			});

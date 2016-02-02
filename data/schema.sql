@@ -6,9 +6,11 @@ CREATE TYPE vote_type AS ENUM ('SPO','MOC','SPS','SAT');
 */
 CREATE TYPE choice_vote AS ENUM('FOR','AGAINST','ABSTAINED','NONVOTING');
 
+DROP TABLE deputes CASCADE;
+DROP TABLE ballots CASCADE;
+DROP TABLE similarity;
 DROP TABLE votes;
-DROP TABLE deputes;
-DROP TABLE ballots;
+
 
 CREATE TABLE deputes (
 	id INTEGER PRIMARY KEY, -- export.acteurs.acteur[i].uuid['#text'].substring(2)
@@ -31,5 +33,13 @@ CREATE TABLE ballots (
 CREATE TABLE votes (
 	id_depute INTEGER REFERENCES deputes,
 	id_ballot INTEGER REFERENCES ballots,
-	choice choice_vote
+	choice choice_vote,
+	PRIMARY KEY(id_depute,id_ballot)
+);
+
+CREATE TABLE similarity (
+	id_depute_a INTEGER REFERENCES deputes,
+	id_depute_b INTEGER REFERENCES deputes,
+	similarity SMALLINT,
+	PRIMARY KEY(id_depute_a,id_depute_b)
 );
