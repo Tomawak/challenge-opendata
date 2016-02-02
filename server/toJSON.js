@@ -68,7 +68,7 @@ function getSimilarity() {
                 "depute":deputes,
                 "links":links
             };
-            fs.writeFile('depute.json', JSON.stringify(finalResult), function (err) {
+            fs.writeFile('public/similarity.json', JSON.stringify(finalResult), function (err) {
                 if (err) return console.log(err);
             });
             client.end();
