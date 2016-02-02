@@ -4,7 +4,7 @@ CREATE TYPE vote_type AS ENUM ('SPO','MOC','SPS','SAT');
  * SPS-scrutin public solennel
  * SAT-scrutin à la tribune
 */
-CREATE TYPE choice_vote AS ENUM('FOR','AGAINST','ABSTAINED','NONVOTING');
+CREATE TYPE choice_vote AS ENUM('FOR','AGAINST','ABSTAINED');
 
 DROP TABLE deputes CASCADE;
 DROP TABLE ballots CASCADE;
@@ -34,6 +34,7 @@ CREATE TABLE votes (
 	id_depute INTEGER REFERENCES deputes,
 	id_ballot INTEGER REFERENCES ballots,
 	choice choice_vote,
+	is_nominative BOOLEAN,
 	PRIMARY KEY(id_depute,id_ballot)
 );
 
