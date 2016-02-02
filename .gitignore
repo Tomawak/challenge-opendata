@@ -1,3 +1,5 @@
 *.json
 *.xml
 *.zip
+/POC-D3/POC-D3/nbproject/private/
+*~
