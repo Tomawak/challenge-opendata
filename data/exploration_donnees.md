@@ -5,18 +5,11 @@ Ouvrez `node` (https://nodejs.org/en/download/package-manager/) puis :
 
 ```javascript
 	//permet de réduire un array a ses valeurs uniques
-	Array.prototype.unique = function() {
-		var unique = [];
-		for (var i = 0; i < this.length; i++) {
-			if (unique.indexOf(this[i]) == -1) {
-				unique.push(this[i]);
-			}
-		}
-		return unique;
-	};
+	Array.prototype.unique = function() {var unique = [];for (var i = 0; i < this.length; i++) {if (unique.indexOf(this[i]) == -1) {unique.push(this[i]);}}return unique;};
 	//chargement d'un fichier json
 	var fs = require('fs');
 	var data = JSON.parse(fs.readFileSync('data_files/Scrutins_XIV.json', 'utf8'));
+	var dataDeputes = JSON.parse(fs.readFileSync('data_files/AMO10_deputes_actifs_mandats_actifs_organes_XIV.json','utf8'));
 	//exploration du fichier
 	data.scrutins.scrutin[0]
 	data.scrutins.scrutin[0].typeVote.typeMajorite

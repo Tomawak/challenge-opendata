@@ -6,11 +6,25 @@ CREATE TYPE vote_type AS ENUM ('SPO','MOC','SPS','SAT');
 */
 CREATE TYPE choice_vote AS ENUM('FOR','AGAINST','ABSTAINED');
 
+DROP TABLE groups;
 DROP TABLE deputes CASCADE;
 DROP TABLE ballots CASCADE;
 DROP TABLE similarity;
 DROP TABLE votes;
 
+CREATE TABLE groups (
+	id SMALLINT PRIMARY KEY,
+	name VARCHAR(50)
+);
+
+INSERT INTO groups (id,name) VALUES
+(0,'Gauche démocrate et républicaine'),
+(1,'Socialiste, républicain et citoyen'),
+(2,'Écologiste'),
+(3,'Radical, républicain, démocrate et progressiste'),
+(4,'Union des démocrates et indépendants'),
+(5,'Les Républicains'),
+(6,'Non inscrit');
 
 CREATE TABLE deputes (
 	id INTEGER PRIMARY KEY, -- export.acteurs.acteur[i].uuid['#text'].substring(2)
@@ -20,7 +34,8 @@ CREATE TABLE deputes (
 	birthdate DATE, -- to_date(export.acteurs.acteur[i].etatCivil.infoNaissance.dateNais,'YYYY-MM-DD'))
 	job_name VARCHAR(80), -- export.acteurs.acteur[i].profession.libelleCourant
 	job_category VARCHAR(50), -- export.acteurs.acteur[i].profession.socProcINSEE.catSocPro
-	job_family VARCHAR(25) -- export.acteurs.acteur[i].profession.socProcINSEE.famSocPro
+	job_family VARCHAR(25), -- export.acteurs.acteur[i].profession.socProcINSEE.famSocPro
+	group_id SMALLINT REFERENCES groups
 );
 
 CREATE TABLE ballots (
