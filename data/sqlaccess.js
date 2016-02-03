@@ -66,6 +66,8 @@ function saveInDB(requestString,values) {
 	});
 };
 
+exports.saveInDB = saveInDB;
+
 exports.saveDeputes = function() {
 	saveInDB("INSERT INTO deputes VALUES ($1,$2,$3,$4,to_date($5,'YYYY-MM-DD'),$6,$7,$8)",deputes);
 };
