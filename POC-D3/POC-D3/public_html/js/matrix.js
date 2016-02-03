@@ -65,17 +65,18 @@ function differentGroupe(GroupeEncadre,groupX,groupY){
 
 function changeColorRect(x,y,width,height,color){
 	var imgData=ctx.getImageData(x,y,width,height);
-	for (var i=0;i<imgData.data.length;i+=4) {
 
-		// CHANGER LA TRANSFORMATION DES COULEURS
+	for (var i=0;i<imgData.data.length;i+=4) {
 		var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
-	  if (color=="noir"){
+		
+	  if (color=="erase"){
 		  colorHSV[1]=0;
-		} else if (color=="red"){
+		} else if (color=="add"){
+			colorHSV[0]=0.333;
 			colorHSV[1]=1;
 		}
-	  var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
 
+	  var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
 	  imgData.data[i]=colorRGB[0];
 	  imgData.data[i+1]=colorRGB[1];
 	  imgData.data[i+2]=colorRGB[2];
@@ -108,16 +109,16 @@ function mouseMoving(evt) {
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    }	
-	    drawContour(GroupeEncadre,"red");
+	    drawContour(GroupeEncadre,"add");
 
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
-    	drawContour(GroupeEncadre,"noir");
+    	drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    }	
-    	drawContour(GroupeEncadre,"red");
+    	drawContour(GroupeEncadre,"add");
     }
 }
 
@@ -191,6 +192,7 @@ function drawMatrix(tab) {
     		var link=tab.links[i][j][k];
 	    	var color = Math.floor(37.48*Math.log(link.value+1))/255;
 	    	var colortab=hsvToRgb(0.3333,0,color);
+
 
 	    	var x = link.source;
 	    	var y = link.target;
