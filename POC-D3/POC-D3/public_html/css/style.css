@@ -27,3 +27,11 @@ html {
 svg {
   font: 10px sans-serif;
 }
+
+.details{
+  position: relative;
+}
+
+.matrix{
+  position: absolute;
+}
