@@ -18,9 +18,12 @@ and open the template in the editor.
         <link rel="stylesheet" href="css/style.css" />
         <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <link rel="shortcut icon" href="">
-
+        <script type="text/javascript" src="js/matrix.js"></script>
+         <script type="text/javascript" src="d3.min.js"></script>
+      <script src="bootstrap/js/jquery.js"></script>
+      <script src="bootstrap/js/bootstrap.min.js"></script>
     </head>
-    <body>
+    <body onload="init()">
     <div class="container">
       <section class="row">
         <h1>Classement des députés en fonction de leurs votes</h1>
@@ -28,7 +31,7 @@ and open the template in the editor.
         <aside style="margin-top:80px" id="selection">
           <p>
             Ordonner par:
-            <select name="order "id="order">
+            <select name="order" id="order">
               <option value="name">Nom</option>
               <option value="parti" selected>Parti</option>
             </select>
@@ -36,15 +39,50 @@ and open the template in the editor.
         </aside>
       </section>
 
-      <script type="text/javascript" src="d3.min.js"></script>
-      <script src="bootstrap/js/jquery.js"></script>
-      <script src="bootstrap/js/bootstrap.min.js"></script>
+      <!-- essai barre de navigation -->
+      <section class="row">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">Nom à préciser</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <!-- Cases à cocher -->
+                <li class="btn-group" role="group" aria-label="...">
+                  <a href="#" type="button" class="btn btn-default">Left</a>
+                  <a href="#" type="button" class="btn btn-default">Middle</a>
+                  <a href="#" type="button" class="btn btn-default">Right</a>
+                </li>
+                <!-- Menu déroulant -->
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Oragniser par <span class="caret"></span></a>
+                  <ul class="dropdown-menu" name="order" id="order">
+                    <li><a href="#" value="parti">Parti</a></li>
+                    <li><a href="#" value="name">Nom</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </section>
+
+
 
       <section class="row">
-        <div><script type="text/javascript" src="js/matrix.js"></script></div>
-        <!--<div class="details"><img src="test.jpg"></div>-->
+        <div class="matrix"></div>
+        <div class="details"><img src="test.jpg"></div>
       </section>
     </div>
-
+    <canvas id="CanvasPrincipal" width="577" height="577"></canvas>
+    <canvas id="CanvasSecondaire" width="577" height="577"></canvas>
     </body>
 </html>
