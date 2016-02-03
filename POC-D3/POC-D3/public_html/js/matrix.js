@@ -1,7 +1,7 @@
 
 var canvas, ctx;
 var canvas2, ctx2;
-//var chrono = Date.now();
+var chrono = Date.now();
 var mousePos;
 
 function init() {
@@ -23,7 +23,7 @@ function init() {
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    $.getJSON("similarity.json", function(data) {
+    $.getJSON("datdata.json", function(data) {
       console.log("json charger " +(Date.now()-chrono));
       chrono = Date.now();
       drawMatrix(data);
@@ -58,8 +58,8 @@ function init() {
       var y = tab.links[i].target;
       if (x<=y) {console.log("c'est la merde!!!");}
       ctx.fillStyle = "rgb("+color+","+color+","+color+")";
-      ctx.fillRect(x, y, x+1, y+1);
-      ctx.fillRect(y, x, y+1, x+1);
+      ctx.fillRect(x, y, 1, 1);
+      ctx.fillRect(y, x, 1, 1);
 
     }
     console.log("matrix draw " +(Date.now()-chrono));
