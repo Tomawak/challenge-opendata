@@ -1,9 +1,14 @@
+if(!process.env.POSTGRES_IP) {
+	console.error("Please set the environment variable POSTGRES_IP")
+	process.exit()
+}
+
 var pg = require('pg');
 var connectionConfig = {
 	user: 'postgres',
 	password: 'password',
 	database: 'cod',
-	host: '129.88.57.46',
+	host: process.env.POSTGRES_IP,
 	port: 8001
 };
 
