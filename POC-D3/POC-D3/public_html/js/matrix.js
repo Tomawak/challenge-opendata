@@ -1,19 +1,53 @@
 
 var canvas, ctx;
-var chrono = Date.now();
+var canvas2, ctx2;
+//var chrono = Date.now();
+var mousePos;
 
 function init() {
-    console.log("dom charger " +(Date.now()-chrono));
-    chrono = Date.now();
-    canvas = document.getElementById("MonCanvas");
+    //console.log("dom charger " +(Date.now()-chrono));
+    //chrono = Date.now();
+
+    canvas = document.getElementById("CanvasPrincipal");
     ctx = canvas.getContext("2d");
+
+    canvas2 = document.getElementById("CanvasSecondaire");
+    ctx2 = canvas2.getContext("2d");
+
+    // mouse events
+    canvas.addEventListener('mousemove', mouseMoving);
+
+    canvas.addEventListener('click', mouseClicking);
+
+    canvas2.addEventListener('click', null);
+
     ctx.clearRect(0,0,canvas.width,canvas.height);
+
     $.getJSON("similarity.json", function(data) {
       console.log("json charger " +(Date.now()-chrono));
       chrono = Date.now();
       drawMatrix(data);
     });
 }
+
+  function mouseMoving(evt) {
+      mousePos = getMousePos(canvas, evt);
+      console.log(mousePos.x, mousePos.y);
+  }
+
+  function mouseClicking(evt) {
+      // créer une nouvelle matrix uniquement pour le parti du député sélectionné
+      ctx2.fillStyle = "#FF0000";
+      ctx2.fillRect(0, 0, 100, 100);
+  }
+
+  function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+  }
 
  function drawMatrix(tab) {
     var nb = tab.depute.length;
@@ -30,8 +64,6 @@ function init() {
     }
     console.log("matrix draw " +(Date.now()-chrono));
   }
-
-
 
 
 
