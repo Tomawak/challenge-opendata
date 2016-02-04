@@ -138,14 +138,14 @@ function changeColorRect(x,y,width,height,color,context){
 }
 
 function AddColorRect(x,y,width,height,color,context){
-    
+
     //getImgData prend la valeur absolu, il faut donc ajouter la marge
     var imgData=context.getImageData(x,y,width,height);
 
     for (var i=0;i<imgData.data.length;i+=4) {
         var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
         colorHSV[0]=0.333;
-        
+
         colorHSV[1]=1;
 
         var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
@@ -166,7 +166,7 @@ function drawContour(GroupeEncadre,color){
     //carre au dessus
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color,ctx);
     //carre en dessous
-    
+
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color,ctx);
     //carre de droite
     changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color,ctx);
@@ -204,10 +204,10 @@ function mouseMoving(evt) {
 
 
 function deputeClicking(evt) {
-    
+
     mousePos = getMousePosOriginal(canvas2, evt);
 
-    
+
     console.log(mousePos.x+" "+mousePos.y);
     var deputeX = Math.floor(mousePos.x/rxGlobal);
     console.log(dataGlobal.depute[deputeX+GroupeClique.beginX].name);
@@ -216,9 +216,10 @@ function deputeClicking(evt) {
     console.log(dataGlobal.depute[deputeY+GroupeClique.beginY].name);
 
     console.log(canvas2.height);
-    
+    createDeputeCard(dataGlobal.depute[deputeY+GroupeClique.beginY],true)
+    createDeputeCard(dataGlobal.depute[deputeX+GroupeClique.beginX],false)
 
-    
+
 }
 
 function mouseClicking(evt) {
@@ -230,21 +231,20 @@ function mouseClicking(evt) {
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
 
-   
+
     GroupeClique={"beginX":groupX.begin,
                    "endX":groupX.end,
                    "beginY":groupY.begin,
                    "endY":groupY.end
                   };
-   
+
      rxGlobal = canvas2.width/(dataGlobal.groups[groupIdX].end-dataGlobal.groups[groupIdX].begin);
      ryGlobal = canvas2.height/(dataGlobal.groups[groupIdY].end-dataGlobal.groups[groupIdY].begin);
-    
     drawMatrix2(dataGlobal, rxGlobal, ryGlobal, groupIdX, groupIdY, ctx2);
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
-    
+
     var first1 = tab.groups[parti1].begin;
     var end1 = tab.groups[parti1].end;
     var first2 = tab.groups[parti2].begin;
@@ -255,7 +255,7 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
 
     for (var i = tab.links[parti1][parti2].length-1; i >=0; i--) {
         var link = tab.links[parti1][parti2][i];
-        
+
 
         var color = Math.floor(37.48*Math.log(link.value+1))/255;
         var colortab=hsvToRgb(0.3333,0,color);
@@ -268,34 +268,34 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
         if (first1 > first2) {
             if ((x>y)) {
                 context.fillRect((x-first1)*rx, (y-first2)*ry, rx, ry);
-                
+
             } else {
                 context.fillRect((y-first1)*rx, (x-first2)*ry, rx, ry);
             }
-            
+
         }else if (first1 < first2) {
             if ((y>x)) {
                context.fillRect((x-first1)*rx, (y-first2)*ry, rx, ry);
-                
+
             } else {
                 context.fillRect((y-first1)*rx, (x-first2)*ry, rx, ry);
             }
         }else{
-            
+
             context.fillRect((x-first1)*rx, (y-first2)*ry, rx, ry);
             context.fillRect((y-first2)*rx, (x-first1)*ry, ry, rx);
         }
 
     }
 
-    
+
 }
 
 function getMousePosOriginal(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
     return {
         x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top 
+        y: evt.clientY - rect.top
     };
 }
 
@@ -376,5 +376,22 @@ function drawMatrix(tab) {
     console.log("matrix drawn in : " +(Date.now()-chrono));
 }
 
+function createDeputeCard(depute,isX) {
+    var groupName = dataGlobal.groups[depute.group].name;
+    var groupeDescription = "Député"+(depute.is_male?"":"e")+
+                                (groupName==="Non inscrit"?
+                                    " non inscrit"+(depute.is_male?"":"e")
+                                    :" du groupe \""+groupName+"\"");
+    if(isX) {
+        $('#x-card-name').text(depute.name)
+        $('#x-card-group').text(groupeDescription)
+        $('#x-card-name').attr("href","https://fr.wikipedia.org/w/index.php?search="+depute.name).html();
+        $('#x-card-img').attr("src","http://www2.assemblee-nationale.fr/static/tribun/14/photos/"+depute.id+".jpg");
 
-
+    } else {
+        $('#y-card-name').text(depute.name)
+        $('#y-card-group').text(groupeDescription)
+        $('#y-card-name').attr("href","https://fr.wikipedia.org/w/index.php?search="+depute.name).html();
+        $('#y-card-img').attr("src","http://www2.assemblee-nationale.fr/static/tribun/14/photos/"+depute.id+".jpg");
+    }
+}
