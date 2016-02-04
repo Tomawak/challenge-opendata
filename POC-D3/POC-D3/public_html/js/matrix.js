@@ -104,29 +104,42 @@ function differentGroupe(GroupeEncadre,groupX,groupY){
 
 
 function changeColorRect(x,y,width,height,color){
-    var imgData=ctx.getImageData(x,y,1,1);
-    var colorHSV = rgbToHsv( imgData.data[0], imgData.data[1], imgData.data[2]);
-    if (color=="erase"){
-        colorHSV[1]=0;
-    } else if (color=="add"){
-        colorHSV[0]=0.333;
-        colorHSV[1]=1;
+    if( (x<0) || (y<0) || (x+width>576) || (y+height>576) ) {
+        return ;
     }
-    var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
-    ctx.fillStyle = "rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+")";
-    ctx.fillRect(x, y, width, height);
+    //getImgData prend la valeur absolu, il faut donc ajouter la marge
+    var imgData=ctx.getImageData(x,y+marginWriting,width,height);
+
+   for (var i=0;i<imgData.data.length;i+=4) {
+       var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
+
+     if (color=="erase"){
+         colorHSV[1]=0;
+       } else if (color=="add"){
+           colorHSV[0]=0.333;
+           colorHSV[1]=1;
+                  }
+
+     var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
+     imgData.data[i]=colorRGB[0];
+     imgData.data[i+1]=colorRGB[1];
+     imgData.data[i+2]=colorRGB[2];
+     imgData.data[i+3]=255;
+  }
+    //putImgData prend la valeur absolu, il faut donc ajouter la marge
+    ctx.putImageData(imgData,x,y+marginWriting);
 }
 
 function drawContour(GroupeEncadre,color){
 
 	//carre de gauche
-	changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 	//carre au dessus
-	changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
+    changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre en dessous
-	changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
+    changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre de droite
-	changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 
 }
 
@@ -144,13 +157,16 @@ function mouseMoving(evt) {
 	    };
 	    drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
-    	drawContour(GroupeEncadre,"erase");
+        console.log("-----------------")
+        console.log("ERASE")
+        drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
-        console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
+        //console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
+        console.log("ADD")
     	drawContour(GroupeEncadre,"add");
     }
 }
