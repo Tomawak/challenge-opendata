@@ -5,6 +5,44 @@ var chrono = Date.now();
 var mousePos;
 var dataGlobal;
 var GroupeEncadre;
+var marginWriting = 130; // in pixels
+
+
+function writeTopGroupName(context,group,color) {
+    context.save();
+    context.font="10px Arial";
+    context.textAlign = "start";
+    context.textBaseline= "middle";
+    context.fillStyle = color;
+    var middlePoint = group.begin+(group.end-group.begin)/2;
+    context.translate(middlePoint,-5);
+    context.rotate(-Math.PI/5);
+    context.clearRect(0,-6,500,10);
+    context.fillText(group.name, 0, 0);
+    context.restore();
+}
+
+function writeLeftGroupName(context,group,color) {
+    context.save();
+    context.font="10px Arial";
+    context.textAlign = "start";
+    context.textBaseline="middle";
+    context.fillStyle = color;
+    var middlePoint = group.begin+(group.end-group.begin)/2;
+    context.translate(575,middlePoint);
+    context.clearRect(0,-10,500,20);
+    context.fillText(group.name,0,0);
+    context.restore();
+}
+
+function writeGroupsName(context,groups) {
+    for (var i = groups.length - 1; i >= 0; i--) {
+        writeTopGroupName(context,groups[i],"black");
+    };
+    for (var i = groups.length - 1; i >= 0; i--) {
+        writeLeftGroupName(context,groups[i],"black");
+    };
+}
 
 function init() {
 
@@ -15,7 +53,7 @@ function init() {
     ctx2 = canvas2.getContext("2d");
 
     // mouse events
-    
+
     canvas.addEventListener('mousemove', mouseMoving);
 
     canvas.addEventListener('click', mouseClicking);
@@ -25,12 +63,15 @@ function init() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
     $.getJSON("similaritiesv2.json", function(data) {
-    	console.log("json charger " +(Date.now()-chrono));
+    	console.log("json loaded in : " +(Date.now()-chrono));
     	chrono = Date.now();
     	dataGlobal=data;
-    	drawMatrix(dataGlobal);
+        ctx.translate(0,marginWriting);
+        writeGroupsName(ctx,data.groups);
+        drawMatrix(dataGlobal);
     });
-}    
+
+}
 
 function findGroup(x) {
 		for (var i = dataGlobal.groups.length - 1; i >= 0; i--) {
@@ -39,9 +80,7 @@ function findGroup(x) {
           return i;
       }
 		};
-    console.log("error impossible");
-    console.log("----------------------------");
-    return null;  
+    return null;
 }
 
 
@@ -64,25 +103,17 @@ function differentGroupe(GroupeEncadre,groupX,groupY){
 
 
 function changeColorRect(x,y,width,height,color){
-	var imgData=ctx.getImageData(x,y,width,height);
-
-	for (var i=0;i<imgData.data.length;i+=4) {
-		var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
-		
-	  if (color=="erase"){
-		  colorHSV[1]=0;
-		} else if (color=="add"){
-			colorHSV[0]=0.333;
-			colorHSV[1]=1;
-		}
-
-	  var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
-	  imgData.data[i]=colorRGB[0];
-	  imgData.data[i+1]=colorRGB[1];
-	  imgData.data[i+2]=colorRGB[2];
-	  imgData.data[i+3]=255;
-  }
-  ctx.putImageData(imgData,x,y);
+    var imgData=ctx.getImageData(x,y,1,1);
+    var colorHSV = rgbToHsv( imgData.data[0], imgData.data[1], imgData.data[2]);
+    if (color=="erase"){
+        colorHSV[1]=0;
+    } else if (color=="add"){
+        colorHSV[0]=0.333;
+        colorHSV[1]=1;
+    }
+    var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
+    ctx.fillStyle = "rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+")";
+    ctx.fillRect(x, y, width, height);
 }
 
 function drawContour(GroupeEncadre,color){
@@ -100,41 +131,46 @@ function drawContour(GroupeEncadre,color){
 
 function mouseMoving(evt) {
     mousePos = getMousePos(canvas, evt);
-    console.log(mousePos.x, mousePos.y);
-    var groupX = dataGlobal.groups[findGroup(mousePos.x)];
-    var groupY = dataGlobal.groups[findGroup(mousePos.y)];
+    var groupIdX = findGroup(mousePos.x);
+    var groupIdY = findGroup(mousePos.y);
+    var groupX = dataGlobal.groups[groupIdX];
+    var groupY = dataGlobal.groups[groupIdY];
     if (!GroupeEncadre) {
-	    	GroupeEncadre={"beginX":groupX.begin,
+	    GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
-	    }	
+	    }
 	    drawContour(GroupeEncadre,"add");
-
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
     	drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
-	    }	
+	    }
+        console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
     	drawContour(GroupeEncadre,"add");
     }
 }
 
 function mouseClicking(evt) {
     // créer une nouvelle matrix uniquement pour le parti du député sélectionné
+    var groupIdX = findGroup(mousePos.x);
+    var groupIdY = findGroup(mousePos.y);
+    var groupX = dataGlobal.groups[groupIdX];
+    var groupY = dataGlobal.groups[groupIdY];
     ctx2.fillStyle = "#FF0000";
     ctx2.fillRect(0, 0, 100, 100);
-    
-
+    writeTopGroupName(ctx,groupX,"red");
+    writeLeftGroupName(ctx,groupY,"red");
 }
 
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
     return {
     	x: evt.clientX - rect.left,
-    	y: evt.clientY - rect.top
+    	y: evt.clientY - rect.top - marginWriting
     };
 }
 
@@ -188,7 +224,7 @@ function drawMatrix(tab) {
     for (var i = tab.links.length - 1; i >= 0; i--) {
     	for (var j = tab.links[i].length - 1; j >= 0; j--) {
     		for (var k = tab.links[i][j].length - 1; k >= 0; k--) {
-    		
+
     		var link=tab.links[i][j][k];
 	    	var color = Math.floor(37.48*Math.log(link.value+1))/255;
 	    	var colortab=hsvToRgb(0.3333,0,color);
@@ -204,7 +240,7 @@ function drawMatrix(tab) {
 	    }
 	  }
 	}
-    console.log("matrix draw " +(Date.now()-chrono));
+    console.log("matrix drawn in : " +(Date.now()-chrono));
 }
 
 
