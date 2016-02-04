@@ -8,7 +8,15 @@ var GroupeEncadre;
 var marginWriting = 130; // in pixels
 
 
-function writeTopGroupName(context,group,color) {
+
+var oldTopGroup = null;
+var oldRightGroup = null;
+
+function writeTopGroupName(context,group,color,shouldEraseOldGroup) {
+    if(shouldEraseOldGroup && oldTopGroup) {
+        console.log("erasing top")
+        writeTopGroupName(context,oldTopGroup,"black",false)
+    }
     context.save();
     context.font="10px Arial";
     context.textAlign = "start";
@@ -17,30 +25,36 @@ function writeTopGroupName(context,group,color) {
     var middlePoint = group.begin+(group.end-group.begin)/2;
     context.translate(middlePoint,-5);
     context.rotate(-Math.PI/5);
-    context.clearRect(0,-6,500,10);
+    context.clearRect(0,-6,500,12);
     context.fillText(group.name, 0, 0);
     context.restore();
+    oldTopGroup = group;
 }
 
-function writeLeftGroupName(context,group,color) {
+function writeRightGroupName(context,group,color,shouldEraseOldGroup) {
+    if(shouldEraseOldGroup && oldRightGroup) {
+        console.log("erasing bottom")
+        writeRightGroupName(context,oldRightGroup,"black",false)
+    }
     context.save();
     context.font="10px Arial";
     context.textAlign = "start";
     context.textBaseline="middle";
     context.fillStyle = color;
-    var middlePoint = group.begin+(group.end-group.begin)/2;
-    context.translate(575,middlePoint);
+    var middlePoint = Math.floor(group.begin+(group.end-group.begin)/2);
+    context.translate(575+5,middlePoint);
     context.clearRect(0,-10,500,20);
     context.fillText(group.name,0,0);
     context.restore();
+    oldRightGroup = group;
 }
 
 function writeGroupsName(context,groups) {
     for (var i = groups.length - 1; i >= 0; i--) {
-        writeTopGroupName(context,groups[i],"black");
+        writeTopGroupName(context,groups[i],"black",false);
     };
     for (var i = groups.length - 1; i >= 0; i--) {
-        writeLeftGroupName(context,groups[i],"black");
+        writeRightGroupName(context,groups[i],"black",false);
     };
 }
 
@@ -68,8 +82,11 @@ function init() {
     	dataGlobal=data;
         ctx.translate(0,marginWriting);
         writeGroupsName(ctx,data.groups);
+        oldTopGroup = null;
+        oldBottomGroup = null;
         drawMatrix(dataGlobal);
     });
+
 }
 
 function findGroup(x) {
@@ -78,9 +95,7 @@ function findGroup(x) {
 			if ((x <= group.end) && (x >= group.begin)){
           return i;
       }
-		}
-    console.log("error impossible");
-    console.log("----------------------------");
+		};
     return null;
 }
 
@@ -181,8 +196,8 @@ function mouseClicking(evt) {
     var groupY = dataGlobal.groups[groupIdY];
     //ctx2.fillStyle = "#FF0000";
     //ctx2.fillRect(0, 0, 100, 100);
-    writeTopGroupName(ctx,groupX,"red");
-    writeLeftGroupName(ctx,groupY,"red");
+    writeTopGroupName(ctx,groupX,"red",true);
+    writeRightGroupName(ctx,groupY,"red",true);
 
     drawMatrix2(dataGlobal, 1, 1, groupIdX, groupIdY, ctx2);
 }

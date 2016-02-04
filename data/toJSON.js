@@ -64,7 +64,8 @@ pg.connect(connectionConfig, function(err, client, done) {
 		result.rows.forEach(function(row,index){
 			deputes.push({
 				"name":row.first_name +" "+row.last_name,
-				"group": row.group_id
+				"group": row.group_id,
+				"id" : row.id
 			});
 
 			if(!firstGroupName) { firstGroupName = row.name }
