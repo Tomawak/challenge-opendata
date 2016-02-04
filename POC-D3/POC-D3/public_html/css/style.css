@@ -45,11 +45,22 @@ svg {
     padding-bottom: 99999px;
 }
 
+#visu {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#CanvasPrincipal {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 #CanvasSecondaire {
 	border: 1px solid black;
 }
 
 .thumbnail {
   min-height:350px; height:350px;
-  min-width:300px; width:300px;
+  min-width:280px; width:280px;
 }

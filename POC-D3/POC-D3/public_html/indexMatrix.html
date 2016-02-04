@@ -26,30 +26,33 @@ and open the template in the editor.
     <body onload="init()">
       <div class="container-fluid">
         <div class="row">
-          <h1>COUCOU</h1>
-          <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also</p>
-        </div>
+          <div class="jumbotron">
+            <h1>Challenge OpenData</h1>
+            <p>Ce projet a pour but de permettre de visualiser plusieurs jeux de données de la manière la plus compréhensible pour le lecteur.</p>
+            <p>Les jeux de données que notre équipe a sélectionnés concernent l'Assemblée Nationale française.</p>
+            <p>Nous avons voulu représenter les similarités entre députés de partis différents ou non.</p>
+          </div>
         <div class="row">
-          <h2 id="visu" >Visualisation</h2>
           <div class="col-md-7">
+            <h2 id="visu"> &nbsp Visualisation : Matrice de similarités</h2>
                 <canvas id="CanvasPrincipal" width="720" height="720">
                   Sorry, your browser doesn't support the &lt;canvas&gt; element.
                 </canvas>
           </div>
-          <div class="col-md-3">
-              <div class="thumbnail">
+          <div class="col-md-2">
+              <div class="thumbnail" id="thumbnail-left">
                 <img id="x-card-img" src="" alt="">
                 <div class="caption">
                   <a class="h3" id="x-card-name"></a>
                   <div id="x-card-group"></div>
                 </div>
               </div>
-              <canvas id="CanvasSecondaire" width="300" height="300">
+              <canvas id="CanvasSecondaire" width="280" height="280">
                 Sorry, your browser doesn't support the &lt;canvas&gt; element.
               </canvas>
           </div>
           <div class="col-md-2">
-            <div class="thumbnail">
+            <div class="thumbnail" id="thumbnail-left">
               <img id="y-card-img" src="" alt="">
               <div class="caption">
                 <a class="h3" id="y-card-name"></a>
