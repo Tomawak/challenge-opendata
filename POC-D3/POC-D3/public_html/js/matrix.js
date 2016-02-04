@@ -214,20 +214,18 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
 
         if (first1 > first2) {
             if ((x>y)) {
-                context.fillRect(x, y, 1, 1);
+                context.fillRect(x-first1, y-first2, 1, 1);
                 
             } else {
-                context.fillRect(y, x, 1, 1);
+                context.fillRect(y-first1, x-first2, 1, 1);
             }
             
         }else if (first1 < first2) {
             if ((y>x)) {
-
-                
-                context.fillRect(x, y, 1, 1);
+               context.fillRect(x-first1, y-first2, 1, 1);
                 
             } else {
-                context.fillRect(y, x, 1, 1);
+                context.fillRect(y-first1, x-first2, 1, 1);
             }
         }else{
             
