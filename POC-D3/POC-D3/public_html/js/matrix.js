@@ -5,6 +5,7 @@ var chrono = Date.now();
 var mousePos;
 var dataGlobal;
 var GroupeEncadre;
+var GroupeClique;
 var marginWriting = 143; // in pixels
 var rxGlobal ;
 var ryGlobal ;
@@ -71,7 +72,7 @@ function init() {
 
     canvas.addEventListener('click', mouseClicking);
 
-    canvas2.addEventListener('click', null);
+    canvas2.addEventListener('click', deputeClicking);
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
@@ -109,12 +110,12 @@ function differentGroupe(GroupeEncadre,groupX,groupY){
 }
 
 
-function changeColorRect(x,y,width,height,color){
+function changeColorRect(x,y,width,height,color,context){
     if( (x<0) || (y<0) || (x+width>576) || (y+height>576) ) {
         return ;
     }
     //getImgData prend la valeur absolu, il faut donc ajouter la marge
-    var imgData=ctx.getImageData(x,y+marginWriting,width,height);
+    var imgData=context.getImageData(x,y+marginWriting,width,height);
 
     for (var i=0;i<imgData.data.length;i+=4) {
         var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
@@ -133,20 +134,42 @@ function changeColorRect(x,y,width,height,color){
         imgData.data[i+3]=255;
     }
     //putImgData prend la valeur absolu, il faut donc ajouter la marge
-    ctx.putImageData(imgData,x,y+marginWriting);
+    context.putImageData(imgData,x,y+marginWriting);
 }
+
+function AddColorRect(x,y,width,height,color,context){
+    
+    //getImgData prend la valeur absolu, il faut donc ajouter la marge
+    var imgData=context.getImageData(x,y,width,height);
+
+    for (var i=0;i<imgData.data.length;i+=4) {
+        var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
+        colorHSV[0]=0.333;
+        
+        colorHSV[1]=1;
+
+        var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
+        imgData.data[i]=colorRGB[0];
+        imgData.data[i+1]=colorRGB[1];
+        imgData.data[i+2]=colorRGB[2];
+        imgData.data[i+3]=255;
+    }
+    //putImgData prend la valeur absolu, il faut donc ajouter la marge
+    context.putImageData(imgData,x,y);
+}
+
 
 function drawContour(GroupeEncadre,color){
 
     //carre de gauche
-    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color,ctx);
     //carre au dessus
-    changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
+    changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color,ctx);
     //carre en dessous
     
-    changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
+    changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color,ctx);
     //carre de droite
-    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color,ctx);
 
 }
 
@@ -179,6 +202,25 @@ function mouseMoving(evt) {
     }
 }
 
+
+function deputeClicking(evt) {
+    
+    mousePos = getMousePosOriginal(canvas2, evt);
+
+    
+    console.log(mousePos.x+" "+mousePos.y);
+    var deputeX = Math.floor(mousePos.x/rxGlobal);
+    console.log(dataGlobal.depute[deputeX+GroupeClique.beginX].name);
+     var deputeY = Math.floor(mousePos.y/ryGlobal);
+
+    console.log(dataGlobal.depute[deputeY+GroupeClique.beginY].name);
+
+    console.log(canvas2.height);
+    
+
+    
+}
+
 function mouseClicking(evt) {
     // créer une nouvelle matrix uniquement pour le parti du député sélectionné
     ctx2.clearRect(0,0,canvas2.width,canvas2.height);
@@ -188,6 +230,13 @@ function mouseClicking(evt) {
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
 
+   
+    GroupeClique={"beginX":groupX.begin,
+                   "endX":groupX.end,
+                   "beginY":groupY.begin,
+                   "endY":groupY.end
+                  };
+   
      rxGlobal = canvas2.width/(dataGlobal.groups[groupIdX].end-dataGlobal.groups[groupIdX].begin);
      ryGlobal = canvas2.height/(dataGlobal.groups[groupIdY].end-dataGlobal.groups[groupIdY].begin);
     
@@ -240,6 +289,14 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
     }
 
     
+}
+
+function getMousePosOriginal(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top 
+    };
 }
 
 function getMousePos(canvas, evt) {
