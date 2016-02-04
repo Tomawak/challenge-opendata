@@ -137,13 +137,14 @@ function changeColorRect(x,y,width,height,color){
 function drawContour(GroupeEncadre,color){
 
 	//carre de gauche
-    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
+    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 	//carre au dessus
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre en dessous
+    
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre de droite
-    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
+    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 
 }
 
@@ -162,6 +163,7 @@ function mouseMoving(evt) {
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
+	    drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
         drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
@@ -169,7 +171,7 @@ function mouseMoving(evt) {
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
-    	drawContour(GroupeEncadre,"add");
+	drawContour(GroupeEncadre,"add");
         writeTopGroupName(ctx,groupX,"red",true);
         writeRightGroupName(ctx,groupY,"red",true);
     }
@@ -188,8 +190,6 @@ function mouseClicking(evt) {
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
-  //var firstX = tab.links[parti1][parti2][0].source;
-  //var firstY = tab.links[parti2][parti1][0].source;
   var firstX = tab.groups[parti1].begin;
   var firstY = tab.groups[parti2].begin;
   for (var i = 0; i < tab.links[parti1][parti2].length; i++) {
@@ -199,10 +199,18 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
 
     var color = Math.floor(37.48*Math.log(link.value+1))/255;
     var colortab=hsvToRgb(0.3333,0,color);
-
     context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
-    context.fillRect(x-firstX, y-firstY, 1, 1);
-    context.fillRect(y-firstY, x-firstX, 1, 1);
+
+    if (firstX > firstY) {
+      context.fillRect(x-firstX, y-firstY, 1, 1);
+      context.fillRect(y-firstY, x-firstX, 1, 1);
+    }else if (firstX < firstY) {
+
+    }else{
+      context.fillRect(x-firstX, y-firstY, rx, ry);
+      context.fillRect(y-firstY, x-firstX, ry, rx);
+    }
+
   }
 }
 
