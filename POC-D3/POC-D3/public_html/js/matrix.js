@@ -157,8 +157,8 @@ function mouseMoving(evt) {
 	    };
 	    drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
-        console.log("-----------------")
-        console.log("ERASE")
+        //console.log("-----------------")
+        //console.log("ERASE")
         drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
@@ -166,7 +166,7 @@ function mouseMoving(evt) {
 	    	"endY":groupY.end
 	    };
         //console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
-        console.log("ADD")
+        //console.log("ADD")
     	drawContour(GroupeEncadre,"add");
     }
 }
@@ -188,8 +188,6 @@ function mouseClicking(evt) {
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
-  //var firstX = tab.links[parti1][parti2][0].source;
-  //var firstY = tab.links[parti2][parti1][0].source;
   var firstX = tab.groups[parti1].begin;
   var firstY = tab.groups[parti2].begin;
 
@@ -198,14 +196,22 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
     var x = link.source;
     var y = link.target;
 
-    //console.log(x-firstX, y-firstY);
+    console.log("x ", x-firstX,"y ", y-firstY);
 
     var color = Math.floor(37.48*Math.log(link.value+1))/255;
     var colortab=hsvToRgb(0.3333,0,color);
-
     context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
-    context.fillRect(x-firstX, y-firstY, 1, 1);
-    context.fillRect(y-firstY, x-firstX, 1, 1);
+
+    if (firstX > firstY) {
+      context.fillRect(x-firstX, y-firstY, 1, 1);
+      context.fillRect(y-firstY, x-firstX, 1, 1);
+    }else if (firstX < firstY) {
+
+    }else{
+      context.fillRect(x-firstX, y-firstY, rx, ry);
+      context.fillRect(y-firstY, x-firstX, ry, rx);
+    }
+
   }
 }
 
