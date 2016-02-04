@@ -53,7 +53,7 @@ pg.connect(connectionConfig, function(err, client, done) {
 							+"deputes.job_family "
 					+"FROM deputes, groups "
 					+"WHERE groups.id=deputes.group_id "
-					+"ORDER BY deputes.group_id ;"
+					+"ORDER BY deputes.group_id"
 	, function(err, result) {
 		if(err) {
 			return console.error('error running query', err);
@@ -69,10 +69,10 @@ pg.connect(connectionConfig, function(err, client, done) {
 				"name":row.first_name +" "+row.last_name,
 				"group": row.group_id,
 				"id" : row.id,
-				"is_male" : row.is_male, 
+				"is_male" : row.is_male,
 				"birthdate" : row.birthdate,
-				"job" : row.job_family 
-				
+				"job" : row.job_family
+
 			});
 
 			if(!firstGroupName) { firstGroupName = row.name }
@@ -96,28 +96,28 @@ pg.connect(connectionConfig, function(err, client, done) {
 			"end": 575,
 			"name": lastGroupName
 		}
+	});
 
-		client.query("SELECT    sim.id_depute_a,"
-			+"deputesA.group_id AS groupA,"
-			+"sim.id_depute_b,"
-			+"deputesB.group_id AS groupB,"
-			+"sim.similarity "
-			+"FROM similarity AS sim, deputes AS deputesA, deputes AS deputesB "
-			+"WHERE sim.id_depute_a=deputesA.id "
-			+"AND sim.id_depute_b=deputesB.id"
-			+"ORDER BY sim.id_depute_a",
-			function(err, result) {
-				if(err) {
-					return console.error('error running query', err);
-				}
-				result.rows.forEach(function(row){
-					links[row.groupa][row.groupb].push({
-						"source":position[row.id_depute_a],
-						"target":position[row.id_depute_b],
-						"value":row.similarity
-					});
+	client.query("SELECT    sim.id_depute_a,"
+		+"deputesA.group_id AS groupA,"
+		+"sim.id_depute_b,"
+		+"deputesB.group_id AS groupB,"
+		+"sim.similarity "
+		+"FROM similarity AS sim, deputes AS deputesA, deputes AS deputesB "
+		+"WHERE sim.id_depute_a=deputesA.id "
+		+"AND sim.id_depute_b=deputesB.id "
+		+"ORDER BY sim.id_depute_a",
+		function(err, result) {
+			if(err) {
+				return console.error('error running query', err);
+			}
+			result.rows.forEach(function(row){
+				links[row.groupa][row.groupb].push({
+					"source":position[row.id_depute_a],
+					"target":position[row.id_depute_b],
+					"value":row.similarity
 				});
-				allRequestAreDone(client);
-		});
+			});
+			allRequestAreDone(client);
 	});
 });
