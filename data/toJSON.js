@@ -47,7 +47,10 @@ pg.connect(connectionConfig, function(err, client, done) {
 							+"deputes.first_name,"
 							+"deputes.last_name,"
 							+"deputes.group_id,"
-							+"groups.name "
+							+"groups.name,"
+							+"deputes.is_male,"
+							+"deputes.birthdate,"
+							+"deputes.job_family "
 					+"FROM deputes, groups "
 					+"WHERE groups.id=deputes.group_id "
 					+"ORDER BY deputes.group_id ;"
@@ -65,7 +68,11 @@ pg.connect(connectionConfig, function(err, client, done) {
 			deputes.push({
 				"name":row.first_name +" "+row.last_name,
 				"group": row.group_id,
-				"id" : row.id
+				"id" : row.id,
+				"is_male" : row.is_male, 
+				"birthdate" : row.birthdate,
+				"job" : row.job_family 
+				
 			});
 
 			if(!firstGroupName) { firstGroupName = row.name }

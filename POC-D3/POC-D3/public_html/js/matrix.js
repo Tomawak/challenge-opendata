@@ -14,7 +14,6 @@ var oldRightGroup = null;
 
 function writeTopGroupName(context,group,color,shouldEraseOldGroup) {
     if(shouldEraseOldGroup && oldTopGroup) {
-        console.log("erasing top")
         writeTopGroupName(context,oldTopGroup,"black",false)
     }
     context.save();
@@ -33,7 +32,6 @@ function writeTopGroupName(context,group,color,shouldEraseOldGroup) {
 
 function writeRightGroupName(context,group,color,shouldEraseOldGroup) {
     if(shouldEraseOldGroup && oldRightGroup) {
-        console.log("erasing bottom")
         writeRightGroupName(context,oldRightGroup,"black",false)
     }
     context.save();
@@ -102,6 +100,7 @@ function findGroup(x) {
 
 
 function differentGroupe(GroupeEncadre,groupX,groupY){
+<<<<<<< HEAD
 	if (GroupeEncadre.beginX!==groupX.begin) {
 		return true ;
 	}
@@ -115,6 +114,12 @@ function differentGroupe(GroupeEncadre,groupX,groupY){
 		return true ;
 	}
 	return false;
+=======
+	return GroupeEncadre.beginX!==groupX.begin
+        || GroupeEncadre.beginY!==groupY.begin
+        || GroupeEncadre.endX!==groupX.end
+		|| GroupeEncadre.endY!==groupY.end
+>>>>>>> 34af7f33af335a19822b27bfdf69a7f353345c9f
 }
 
 
@@ -127,7 +132,7 @@ function changeColorRect(x,y,width,height,color){
 
    for (var i=0;i<imgData.data.length;i+=4) {
        var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
-       
+
      if (color=="erase"){
          colorHSV[1]=0;
        } else if (color=="add"){
@@ -165,12 +170,15 @@ function mouseMoving(evt) {
     var groupIdY = findGroup(mousePos.y);
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
+    if(!groupX || !groupY){
+        return;
+    }
     if (!GroupeEncadre) {
 	    GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
-	    }
+	    };
 	    drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
         drawContour(GroupeEncadre,"erase");
@@ -178,24 +186,21 @@ function mouseMoving(evt) {
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
-	    }
-        //console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
-       drawContour(GroupeEncadre,"add");
-
+	    };
+	drawContour(GroupeEncadre,"add");
+        writeTopGroupName(ctx,groupX,"red",true);
+        writeRightGroupName(ctx,groupY,"red",true);
     }
 }
 
 function mouseClicking(evt) {
     // créer une nouvelle matrix uniquement pour le parti du député sélectionné
+    ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+
     var groupIdX = findGroup(mousePos.x);
     var groupIdY = findGroup(mousePos.y);
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
-
-    //ctx2.fillStyle = "#FF0000";
-    //ctx2.fillRect(0, 0, 100, 100);
-    writeTopGroupName(ctx,groupX,"red",true);
-    writeRightGroupName(ctx,groupY,"red",true);
 
     drawMatrix2(dataGlobal, 1, 1, groupIdX, groupIdY, ctx2);
 }
@@ -204,6 +209,7 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
   
   var firstX = tab.groups[parti1].begin;
   var firstY = tab.groups[parti2].begin;
+
 
 
 
