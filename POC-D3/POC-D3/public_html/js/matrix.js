@@ -14,7 +14,6 @@ var oldRightGroup = null;
 
 function writeTopGroupName(context,group,color,shouldEraseOldGroup) {
     if(shouldEraseOldGroup && oldTopGroup) {
-        console.log("erasing top")
         writeTopGroupName(context,oldTopGroup,"black",false)
     }
     context.save();
@@ -33,7 +32,6 @@ function writeTopGroupName(context,group,color,shouldEraseOldGroup) {
 
 function writeRightGroupName(context,group,color,shouldEraseOldGroup) {
     if(shouldEraseOldGroup && oldRightGroup) {
-        console.log("erasing bottom")
         writeRightGroupName(context,oldRightGroup,"black",false)
     }
     context.save();
@@ -102,19 +100,10 @@ function findGroup(x) {
 
 
 function differentGroupe(GroupeEncadre,groupX,groupY){
-	if (GroupeEncadre.beginX!==groupX.begin) {
-		return true ;
-	}
-	if (GroupeEncadre.beginY!==groupY.begin) {
-		return true ;
-	}
-	if (GroupeEncadre.endX!==groupX.end) {
-		return true ;
-	}
-	if (GroupeEncadre.endY!==groupX.end) {
-		return true ;
-	}
-	return false;
+	return GroupeEncadre.beginX!==groupX.begin
+        || GroupeEncadre.beginY!==groupY.begin
+        || GroupeEncadre.endX!==groupX.end
+		|| GroupeEncadre.endY!==groupY.end
 }
 
 
@@ -164,25 +153,25 @@ function mouseMoving(evt) {
     var groupIdY = findGroup(mousePos.y);
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
+    if(!groupX || !groupY){
+        return;
+    }
     if (!GroupeEncadre) {
 	    GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
-	    drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
-        console.log("-----------------")
-        console.log("ERASE")
         drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
-        //console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
-        console.log("ADD")
     	drawContour(GroupeEncadre,"add");
+        writeTopGroupName(ctx,groupX,"red",true);
+        writeRightGroupName(ctx,groupY,"red",true);
     }
 }
 
@@ -194,10 +183,6 @@ function mouseClicking(evt) {
     var groupIdY = findGroup(mousePos.y);
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
-    //ctx2.fillStyle = "#FF0000";
-    //ctx2.fillRect(0, 0, 100, 100);
-    writeTopGroupName(ctx,groupX,"red",true);
-    writeRightGroupName(ctx,groupY,"red",true);
 
     drawMatrix2(dataGlobal, 1, 1, groupIdX, groupIdY, ctx2);
 }
@@ -207,15 +192,10 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
   //var firstY = tab.links[parti2][parti1][0].source;
   var firstX = tab.groups[parti1].begin;
   var firstY = tab.groups[parti2].begin;
-  console.log(firstX, firstY);
-  console.log("-----------------------");
-  //console.log(tab.links[parti1][parti2][2].target);
   for (var i = 0; i < tab.links[parti1][parti2].length; i++) {
     var link = tab.links[parti1][parti2][i];
     var x = link.source;
     var y = link.target;
-
-    //console.log(x-firstX, y-firstY);
 
     var color = Math.floor(37.48*Math.log(link.value+1))/255;
     var colortab=hsvToRgb(0.3333,0,color);
