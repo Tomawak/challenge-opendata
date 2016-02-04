@@ -8,7 +8,14 @@ var GroupeEncadre;
 var marginWriting = 130; // in pixels
 
 
-function writeTopGroupName(context,group,color) {
+
+var oldTopGroup = null;
+var oldRightGroup = null;
+
+function writeTopGroupName(context,group,color,shouldEraseOldGroup) {
+    if(shouldEraseOldGroup && oldTopGroup) {
+        writeTopGroupName(context,oldTopGroup,"black",false)
+    }
     context.save();
     context.font="10px Arial";
     context.textAlign = "start";
@@ -17,30 +24,35 @@ function writeTopGroupName(context,group,color) {
     var middlePoint = group.begin+(group.end-group.begin)/2;
     context.translate(middlePoint,-5);
     context.rotate(-Math.PI/5);
-    context.clearRect(0,-6,500,10);
+    context.clearRect(0,-6,500,12);
     context.fillText(group.name, 0, 0);
     context.restore();
+    oldTopGroup = group;
 }
 
-function writeLeftGroupName(context,group,color) {
+function writeRightGroupName(context,group,color,shouldEraseOldGroup) {
+    if(shouldEraseOldGroup && oldRightGroup) {
+        writeRightGroupName(context,oldRightGroup,"black",false)
+    }
     context.save();
     context.font="10px Arial";
     context.textAlign = "start";
     context.textBaseline="middle";
     context.fillStyle = color;
-    var middlePoint = group.begin+(group.end-group.begin)/2;
-    context.translate(575,middlePoint);
+    var middlePoint = Math.floor(group.begin+(group.end-group.begin)/2);
+    context.translate(575+5,middlePoint);
     context.clearRect(0,-10,500,20);
     context.fillText(group.name,0,0);
     context.restore();
+    oldRightGroup = group;
 }
 
 function writeGroupsName(context,groups) {
     for (var i = groups.length - 1; i >= 0; i--) {
-        writeTopGroupName(context,groups[i],"black");
+        writeTopGroupName(context,groups[i],"black",false);
     };
     for (var i = groups.length - 1; i >= 0; i--) {
-        writeLeftGroupName(context,groups[i],"black");
+        writeRightGroupName(context,groups[i],"black",false);
     };
 }
 
@@ -68,8 +80,11 @@ function init() {
     	dataGlobal=data;
         ctx.translate(0,marginWriting);
         writeGroupsName(ctx,data.groups);
+        oldTopGroup = null;
+        oldBottomGroup = null;
         drawMatrix(dataGlobal);
     });
+
 }
 
 function findGroup(x) {
@@ -78,28 +93,17 @@ function findGroup(x) {
 			if ((x <= group.end) && (x >= group.begin)){
           return i;
       }
-		}
-    console.log("error impossible");
-    console.log("----------------------------");
+		};
     return null;
 }
 
 
 
 function differentGroupe(GroupeEncadre,groupX,groupY){
-	if (GroupeEncadre.beginX!==groupX.begin) {
-		return true ;
-	}
-	if (GroupeEncadre.beginY!==groupY.begin) {
-		return true ;
-	}
-	if (GroupeEncadre.endX!==groupX.end) {
-		return true ;
-	}
-	if (GroupeEncadre.endY!==groupX.end) {
-		return true ;
-	}
-	return false;
+	return GroupeEncadre.beginX!==groupX.begin
+        || GroupeEncadre.beginY!==groupY.begin
+        || GroupeEncadre.endX!==groupX.end
+		|| GroupeEncadre.endY!==groupY.end
 }
 
 
@@ -133,13 +137,14 @@ function changeColorRect(x,y,width,height,color){
 function drawContour(GroupeEncadre,color){
 
 	//carre de gauche
-    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
+    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 	//carre au dessus
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre en dessous
+    
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre de droite
-    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
+    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 
 }
 
@@ -149,6 +154,9 @@ function mouseMoving(evt) {
     var groupIdY = findGroup(mousePos.y);
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
+    if(!groupX || !groupY){
+        return;
+    }
     if (!GroupeEncadre) {
 	    GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
@@ -157,17 +165,15 @@ function mouseMoving(evt) {
 	    };
 	    drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
-        console.log("-----------------")
-        console.log("ERASE")
         drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
-        //console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
-        console.log("ADD")
-    	drawContour(GroupeEncadre,"add");
+	drawContour(GroupeEncadre,"add");
+        writeTopGroupName(ctx,groupX,"red",true);
+        writeRightGroupName(ctx,groupY,"red",true);
     }
 }
 
@@ -179,35 +185,32 @@ function mouseClicking(evt) {
     var groupIdY = findGroup(mousePos.y);
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
-    //ctx2.fillStyle = "#FF0000";
-    //ctx2.fillRect(0, 0, 100, 100);
-    writeTopGroupName(ctx,groupX,"red");
-    writeLeftGroupName(ctx,groupY,"red");
 
     drawMatrix2(dataGlobal, 1, 1, groupIdX, groupIdY, ctx2);
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
-  //var firstX = tab.links[parti1][parti2][0].source;
-  //var firstY = tab.links[parti2][parti1][0].source;
   var firstX = tab.groups[parti1].begin;
   var firstY = tab.groups[parti2].begin;
-  console.log(firstX, firstY);
-  console.log("-----------------------");
-  //console.log(tab.links[parti1][parti2][2].target);
   for (var i = 0; i < tab.links[parti1][parti2].length; i++) {
     var link = tab.links[parti1][parti2][i];
     var x = link.source;
     var y = link.target;
 
-    //console.log(x-firstX, y-firstY);
-
     var color = Math.floor(37.48*Math.log(link.value+1))/255;
     var colortab=hsvToRgb(0.3333,0,color);
-
     context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
-    context.fillRect(x-firstX, y-firstY, 1, 1);
-    context.fillRect(y-firstY, x-firstX, 1, 1);
+
+    if (firstX > firstY) {
+      context.fillRect(x-firstX, y-firstY, 1, 1);
+      context.fillRect(y-firstY, x-firstX, 1, 1);
+    }else if (firstX < firstY) {
+
+    }else{
+      context.fillRect(x-firstX, y-firstY, rx, ry);
+      context.fillRect(y-firstY, x-firstX, ry, rx);
+    }
+
   }
 }
 
