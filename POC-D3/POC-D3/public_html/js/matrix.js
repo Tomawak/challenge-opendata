@@ -187,7 +187,7 @@ function mouseClicking(evt) {
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
 
-    drawMatrix2(dataGlobal, 1, 1, groupIdX, groupIdY, ctx2);
+    drawMatrix2(dataGlobal, 4, 1, groupIdX, groupIdY, ctx2);
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
@@ -214,18 +214,18 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
 
         if (first1 > first2) {
             if ((x>y)) {
-                context.fillRect(x-first1, y-first2, 1, 1);
+                context.fillRect((x-first1)*rx, (y-first2)*ry, rx, ry);
                 
             } else {
-                context.fillRect(y-first1, x-first2, 1, 1);
+                context.fillRect((y-first1)*rx, (x-first2)*ry, rx, ry);
             }
             
         }else if (first1 < first2) {
             if ((y>x)) {
-               context.fillRect(x-first1, y-first2, 1, 1);
+               context.fillRect((x-first1)*rx, (y-first2)*ry, rx, ry);
                 
             } else {
-                context.fillRect(y-first1, x-first2, 1, 1);
+                context.fillRect((y-first1)*rx, (x-first2)*ry, rx, ry);
             }
         }else{
             
