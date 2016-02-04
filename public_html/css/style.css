@@ -1,0 +1,46 @@
+.background {
+  fill: #eee;
+}
+
+line {
+  stroke: #fff;
+}
+
+rect.active {
+  fill: red;
+}
+
+text.active {
+  fill: red;
+}
+html {
+  min-width: 1040px;
+}
+
+.html .attribute,
+.css .attribute,
+.javascript .class,
+.javascript .special {
+  color: #e6550d;
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+.details{
+  position: relative;
+}
+
+.matrix{
+  position: absolute;
+}
+
+.row{
+    overflow: hidden;
+}
+
+[class*="col-"]{
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
+}

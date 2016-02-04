@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+    <head>
+    <head>
+        <meta charset="utf-8">
+        <title>Rapport challenge Open Data</title>
+    </head>
+	<body BACKGROUND="paper.gif">
+<center>
+<h2> Rapport Challenge Open Data </h2>
+</center>
+<p>
+<h5>Andres Bel Alonso,       Mélodie Benmouffek,	Thomas Bombrun,       Cédric Garnier</h5>
+
+<p>
+Le but de notre visualisation Open data est de vérifier jusqu’à quel point les logiques du groupe sont respectées dans l'Assemblée Nationale. Pour cela, nous avons affiché, dans un tableau à doubles entrées, le nombre de votes communs entre les 577 députés de l'Assemblée nationale. Le tableau donne une vue globale des députés ordonnée par groupes de l'Assemblée Nationale. L’interaction avec l'interface permet d’obtenir un détail du groupe, et les informations d’un certain député. 
+
+<p>
+
+<h3>Source des Données</h3>
+<p>
+Pour accomplir cette tâche, nous avons récupéré le résultat de 1201 votes de la legislature en cours, depuis <a href=http://data.assemblee-nationale.fr/>le site de données de l’Assemblée Nationale </a>. Plus particulièrement les jeux de données concernant les <a href=http://data.assemblee-nationale.fr/travaux-parlementaires/votes>votes</a> en format JSON et ceux concernant les <a href=http://data.assemblee-nationale.fr/acteurs/deputes-en-exercice> députés</a>, également au format JSON. 
+<p>
+
+<h3>Traitements Effectués</h3>
+<p>
+Nous avons écrits des scripts JavaScript pour extraire la partie des données qui nous intéresse. Les scripts étaient exécutés en NodeJS (les votes, les informations à propos députés) et nous les avons insérez dans une base de données PostgreSQL. 
+Puis, nous avons écrit une function SQL pour calculer les similarités de vote entre deux députés. La similarité entre 2 députés n’étant que le nombre de votes où ils ont voté la même chose (pour, contre ou abstention). Les similariés ainsi calculés sont insérées dans une nouvelle table de la base de données.
+Puis, nous avons fait un deuxième script javascript pour créer un nouveau fichier JSON avec une bonne structure pour le backend (fait aussi en javascript), depuis les données inséré et calculé dans la base de données. L’application finale en javascript recupérera les données de ce JSON.
+
+<p>
+<h3>Architecture</h3>
+<p>
+<h3>Choix des Technologies</h3>
+<p>
+Nous avons télécharger les fichiers JSON au lieu du format XML propose également par le site de l'Assemblée Nationale car les outils permettant sa visualisation et exploration humaine nous semblait meilleurs. C’est pour celà que nous avons utilisé nodeJS pendant l’exploration préalable des données. Puis la solution logique était javascript à cause de facilité d'interaction avec le format JSON.
+Nous avons utilisé PostgreeSQL comme SGBD car il existe une librairie javascript (<a href=https://www.npmjs.com/package/pg>pg</a>) qui rend l’interaction (lectures et écritures) avec javascript très facile.
+Notre idée initiale était que le backend interroge directement la base de donnée relationnelle. Mais les difficultés pour déployer une base de données PostgreSQL dans un serveur ( pas possible de le faire sur les pcserveur de l’ENSIMAG, ni à l’extérieur depuis le réseau de l’ENSIMAG) ont fait que la base de donnée est devenue un simple intermédiaire. C’est pour celà qu’on crée un fichier JSON avec les données du backend. 
+</body>
+</html>
