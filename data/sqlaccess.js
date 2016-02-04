@@ -2,11 +2,23 @@ if(!process.env.POSTGRES_IP) {
 	console.error("Please set the environment variable POSTGRES_IP")
 	process.exit()
 }
+if(!process.env.POSTGRES_USER) {
+	console.error("Please set the environment variable POSTGRES_USER")
+	process.exit()
+}
+if(!process.env.POSTGRES_PASSWORD) {
+	console.error("Please set the environment variable POSTGRES_PASSWORD")
+	process.exit()
+}
+if(!process.env.POSTGRES_IP) {
+	console.error("Please set the environment variable POSTGRES_IP")
+	process.exit()
+}
 
 var pg = require('pg');
 var connectionConfig = {
-	user: 'postgres',
-	password: 'password',
+	user: process.env.POSTGRES_USER,
+	password: process.env.POSTGRES_PASSWORD,
 	database: 'cod',
 	host: process.env.POSTGRES_IP,
 	port: 8001

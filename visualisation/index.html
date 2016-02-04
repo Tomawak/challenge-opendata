@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>OpenData</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/style.css" />
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="shortcut icon" href="">
+        <script type="text/javascript" src="js/main.js"></script>
+      <script src="bootstrap/js/jquery.js"></script>
+      <script src="bootstrap/js/bootstrap.min.js"></script>
+    </head>
+    <body onload="init()">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="jumbotron">
+            <h1>Challenge OpenData</h1>
+            <p>Ce projet a été réalisé dans le cadre du challenge Opendata de l'Ensimag en février 2016.</p>
+            <p>Ce site permet de visualiser les corrélations de votes des députés francais de la XIVème législature.</p>
+            <p>Sur l'image ci dessous, l'abscisse et l'ordonnée représentent chacune un député. À l'intersection de deux députés, la couleur du point nous indique leur proximité politique (blanc pour des députés votant toujours la même chose, noir pour des députés votant de nombreuses fois différement). En cliquant sur cett image un zoom s'effectue et un second affichage montre le même tableau, centré cette fois sur les groupes parlementaires survolés. Enfin un clic sur ce nouveau tableau nous affiche une fiche descriptive du député en question.</p>
+          </div>
+        <div class="row">
+          <div class="col-md-7">
+            <h2 id="visu"> &nbsp Visualisation : Matrice de similarités</h2>
+                <canvas id="CanvasPrincipal" width="720" height="720">
+                  Sorry, your browser doesn't support the &lt;canvas&gt; element.
+                </canvas>
+          </div>
+          <div class="col-md-2">
+              <div class="thumbnail" id="thumbnail-left">
+                <img id="x-card-img" src="" alt="">
+                <div class="caption">
+                  <a class="h3" id="x-card-name"></a>
+                  <div id="x-card-group"></div>
+                </div>
+              </div>
+              <canvas id="CanvasSecondaire" width="280" height="280">
+                Sorry, your browser doesn't support the &lt;canvas&gt; element.
+              </canvas>
+          </div>
+          <div class="col-md-2">
+            <div class="thumbnail" id="thumbnail-left">
+              <img id="y-card-img" src="" alt="">
+              <div class="caption">
+                <a class="h3" id="y-card-name"></a>
+                <div id="y-card-group"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+</html>

@@ -1,0 +1,66 @@
+.background {
+  fill: #eee;
+}
+
+line {
+  stroke: #fff;
+}
+
+rect.active {
+  fill: red;
+}
+
+text.active {
+  fill: red;
+}
+html {
+  min-width: 1040px;
+}
+
+.html .attribute,
+.css .attribute,
+.javascript .class,
+.javascript .special {
+  color: #e6550d;
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+.details{
+  position: relative;
+}
+
+.matrix{
+  position: absolute;
+}
+
+.row{
+    overflow: hidden;
+}
+
+[class*="col-"]{
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
+}
+
+#visu {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#CanvasPrincipal {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#CanvasSecondaire {
+	border: 1px solid black;
+}
+
+.thumbnail {
+  min-height:350px; height:350px;
+  min-width:280px; width:280px;
+}
