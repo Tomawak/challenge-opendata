@@ -133,13 +133,13 @@ function changeColorRect(x,y,width,height,color){
 function drawContour(GroupeEncadre,color){
 
 	//carre de gauche
-    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
+    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 	//carre au dessus
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre en dessous
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre de droite
-    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
+    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 
 }
 
@@ -192,9 +192,7 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
   //var firstY = tab.links[parti2][parti1][0].source;
   var firstX = tab.groups[parti1].begin;
   var firstY = tab.groups[parti2].begin;
-  console.log(firstX, firstY);
-  console.log("-----------------------");
-  //console.log(tab.links[parti1][parti2][2].target);
+
   for (var i = 0; i < tab.links[parti1][parti2].length; i++) {
     var link = tab.links[parti1][parti2][i];
     var x = link.source;
