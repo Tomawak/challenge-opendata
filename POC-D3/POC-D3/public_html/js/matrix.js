@@ -11,6 +11,7 @@ var rxGlobal ;
 var ryGlobal ;
 
 
+
 var oldTopGroup = null;
 var oldRightGroup = null;
 
@@ -138,15 +139,23 @@ function changeColorRect(x,y,width,height,color,context){
 }
 
 function AddColorRect(x,y,width,height,color,context){
-    
-    //getImgData prend la valeur absolu, il faut donc ajouter la marge
-    var imgData=context.getImageData(x,y,width,height);
 
+    var deputeX = Math.floor(x/rxGlobal);
+    var deputeY = Math.floor(y/ryGlobal);
+    var deputeXScale = deputeX*rxGlobal;
+    var deputeYScale = deputeY*ryGlobal;
+
+    //getImgData prend la valeur absolu, il faut donc ajouter la marge
+    var imgData=context.getImageData(deputeXScale,deputeYScale,width,height);
+    
     for (var i=0;i<imgData.data.length;i+=4) {
         var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
-        colorHSV[0]=0.333;
-        
-        colorHSV[1]=1;
+        if (color=="erase"){
+            colorHSV[1]=0;
+        } else if (color=="add"){
+            colorHSV[0]=0.333;
+            colorHSV[1]=1;
+        }
 
         var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
         imgData.data[i]=colorRGB[0];
@@ -155,7 +164,7 @@ function AddColorRect(x,y,width,height,color,context){
         imgData.data[i+3]=255;
     }
     //putImgData prend la valeur absolu, il faut donc ajouter la marge
-    context.putImageData(imgData,x,y);
+    context.putImageData(imgData,deputeXScale,deputeYScale);
 }
 
 
@@ -215,7 +224,7 @@ function deputeClicking(evt) {
 
     console.log(dataGlobal.depute[deputeY+GroupeClique.beginY].name);
 
-    console.log(canvas2.height);
+    
     
 
     
@@ -257,7 +266,8 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
         var link = tab.links[parti1][parti2][i];
         
 
-        var color = Math.floor(37.48*Math.log(link.value+1))/255;
+       // var color = Math.floor(37.48*Math.log(link.value+1))/255;
+        var color = Math.floor(44.6897827339*Math.log(link.value/3+1))/255;
         var colortab=hsvToRgb(0.3333,0,color);
 
         var x = link.source;
@@ -359,7 +369,10 @@ function drawMatrix(tab) {
     	    for (var k = tab.links[i][j].length - 1; k >= i; k--) {
 
     		var link=tab.links[i][j][k];
-	    	var color = Math.floor(37.48*Math.log(link.value+1))/255;
+           // var color =(link.value)/850;
+           var color = Math.floor(44.6897827339*Math.log(link.value/3+1))/255;
+            
+	    	//var color = Math.floor(37.48*Math.log(link.value+1))/255;
 	    	var colortab=hsvToRgb(0.3333,0,color);
 
 
