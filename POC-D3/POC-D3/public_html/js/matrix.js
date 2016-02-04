@@ -88,38 +88,23 @@ function init() {
 }
 
 function findGroup(x) {
-		for (var i = dataGlobal.groups.length - 1; i >= 0; i--) {
-			var group =dataGlobal.groups[i];
-			if ((x <= group.end) && (x >= group.begin)){
-          return i;
-      }
-		};
+    for (var i = dataGlobal.groups.length - 1; i >= 0; i--) {
+	var group =dataGlobal.groups[i];
+	if ((x <= group.end) && (x >= group.begin)){
+            return i;
+        }
+    };
     return null;
 }
 
 
 
 function differentGroupe(GroupeEncadre,groupX,groupY){
-<<<<<<< HEAD
-	if (GroupeEncadre.beginX!==groupX.begin) {
-		return true ;
-	}
-	if (GroupeEncadre.beginY!==groupY.begin) {
-		return true ;
-	}
-	if (GroupeEncadre.endX!==groupX.end) {
-		return true ;
-	}
-	if (GroupeEncadre.endY!==groupY.end) {
-		return true ;
-	}
-	return false;
-=======
-	return GroupeEncadre.beginX!==groupX.begin
+
+    return GroupeEncadre.beginX!==groupX.begin
         || GroupeEncadre.beginY!==groupY.begin
         || GroupeEncadre.endX!==groupX.end
-		|| GroupeEncadre.endY!==groupY.end
->>>>>>> 34af7f33af335a19822b27bfdf69a7f353345c9f
+	|| GroupeEncadre.endY!==groupY.end
 }
 
 
@@ -130,36 +115,36 @@ function changeColorRect(x,y,width,height,color){
     //getImgData prend la valeur absolu, il faut donc ajouter la marge
     var imgData=ctx.getImageData(x,y+marginWriting,width,height);
 
-   for (var i=0;i<imgData.data.length;i+=4) {
-       var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
+    for (var i=0;i<imgData.data.length;i+=4) {
+        var colorHSV = rgbToHsv( imgData.data[i], imgData.data[i+1], imgData.data[i+2]);
 
-     if (color=="erase"){
-         colorHSV[1]=0;
-       } else if (color=="add"){
-           colorHSV[0]=0.333;
-           colorHSV[1]=1;
-                  }
+        if (color=="erase"){
+            colorHSV[1]=0;
+        } else if (color=="add"){
+            colorHSV[0]=0.333;
+            colorHSV[1]=1;
+        }
 
-     var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
-     imgData.data[i]=colorRGB[0];
-     imgData.data[i+1]=colorRGB[1];
-     imgData.data[i+2]=colorRGB[2];
-     imgData.data[i+3]=255;
-  }
+        var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
+        imgData.data[i]=colorRGB[0];
+        imgData.data[i+1]=colorRGB[1];
+        imgData.data[i+2]=colorRGB[2];
+        imgData.data[i+3]=255;
+    }
     //putImgData prend la valeur absolu, il faut donc ajouter la marge
     ctx.putImageData(imgData,x,y+marginWriting);
 }
 
 function drawContour(GroupeEncadre,color){
 
-	//carre de gauche
+    //carre de gauche
     changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
-	//carre au dessus
+    //carre au dessus
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
-	//carre en dessous
+    //carre en dessous
     
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
-	//carre de droite
+    //carre de droite
     changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
 
 }
@@ -174,19 +159,19 @@ function mouseMoving(evt) {
         return;
     }
     if (!GroupeEncadre) {
-	    GroupeEncadre={"beginX":groupX.begin,
-	    	"endX":groupX.end,
-	    	"beginY":groupY.begin,
-	    	"endY":groupY.end
-	    };
-	    drawContour(GroupeEncadre,"add");
+	GroupeEncadre={"beginX":groupX.begin,
+	    	       "endX":groupX.end,
+	    	       "beginY":groupY.begin,
+	    	       "endY":groupY.end
+	              };
+	drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
         drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
-	    	"endX":groupX.end,
-	    	"beginY":groupY.begin,
-	    	"endY":groupY.end
-	    };
+	    	       "endX":groupX.end,
+	    	       "beginY":groupY.begin,
+	    	       "endY":groupY.end
+	              };
 	drawContour(GroupeEncadre,"add");
         writeTopGroupName(ctx,groupX,"red",true);
         writeRightGroupName(ctx,groupY,"red",true);
@@ -206,89 +191,53 @@ function mouseClicking(evt) {
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
-  
-  var firstX = tab.groups[parti1].begin;
-  var firstY = tab.groups[parti2].begin;
-
-
-
-
-  for (var i = tab.links[parti1][parti2].length-1; i >=0; i--) {
-    var link = tab.links[parti1][parti2][i];
     
-
-    var color = Math.floor(37.48*Math.log(link.value+1))/255;
-    var colortab=hsvToRgb(0.3333,0,color);
-
-    var x = link.source;
-    var y = link.target;
-
-    context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
-
-    if (firstX > firstY) {
-      context.fillRect(x, y, 1, 1);
-      context.fillRect(y, x, 1, 1);
-    }else if (firstX < firstY) {
-
-    }else{
-      context.fillRect(x-firstX, y-firstY, rx, ry);
-      context.fillRect(y-firstY, x-firstX, ry, rx);
-    }
-
-  }
-/*
-  firstX = tab.groups[parti2].begin;
-  firstY = tab.groups[parti1].begin;
+    var first1 = tab.groups[parti1].begin;
+    var end1 = tab.groups[parti1].end;
+    var first2 = tab.groups[parti2].begin;
+    var end2 = tab.groups[parti2].end;
 
 
 
-  for (var i = tab.links[parti2][parti1].length-1; i >=0; i--) {
-    var link = tab.links[parti2][parti1][i];
-    
 
-    var color = Math.floor(37.48*Math.log(link.value+1))/255;
-    var colortab=hsvToRgb(0.3333,0,color);
+    for (var i = tab.links[parti1][parti2].length-1; i >=0; i--) {
+        var link = tab.links[parti1][parti2][i];
+        
 
-    var x = link.source;
-    var y = link.target;
+        var color = Math.floor(37.48*Math.log(link.value+1))/255;
+        var colortab=hsvToRgb(0.3333,0,color);
 
-    context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
+        var x = link.source;
+        var y = link.target;
 
-    if (firstX > firstY) {
-      context.fillRect(x-firstX, y-firstY, 1, 1);
-      context.fillRect(y-firstY, x-firstX, 1, 1);
-    }else if (firstX < firstY) {
+        context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
 
-    }else{
-      context.fillRect(x-firstX, y-firstY, rx, ry);
-      context.fillRect(y-firstY, x-firstX, ry, rx);
-    }
-
-  }
-
-  var nb = tab.depute.length;
-    for (var i = tab.links.length - 1; i >= 0; i--) {
-        for (var j = tab.links[i].length - 1; j >= 0; j--) {
-            for (var k = tab.links[i][j].length - 1; k >= 0; k--) {
-                if ((i==parti1 && j==parti2)  ){
-            var link=tab.links[i][j][k];
-            var color = Math.floor(37.48*Math.log(link.value+1))/255;
-            var colortab=hsvToRgb(0.3333,0,color);
-
-
-            var x = link.source;
-            var y = link.target;
-
-            context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
-            context.fillRect(x, y, 1, 1);
-            context.fillRect(y, x, 1, 1);
+        if (first1 > first2) {
+            if ((x>y)) {
+                context.fillRect(x, y, 1, 1);
+                
+            } else {
+                context.fillRect(y, x, 1, 1);
             }
-        }
-      }
-    }
-*/
+            
+        }else if (first1 < first2) {
+            if ((y>x)) {
 
-  
+                
+                context.fillRect(x, y, 1, 1);
+                
+            } else {
+                context.fillRect(y, x, 1, 1);
+            }
+        }else{
+            
+            context.fillRect(x-first1, y-first2, rx, ry);
+            context.fillRect(y-first2, x-first1, ry, rx);
+        }
+
+    }
+
+    
 }
 
 function getMousePos(canvas, evt) {
@@ -311,9 +260,9 @@ function rgbToHsv(r, g, b){
         h = 0; // achromatic
     }else{
         switch(max){
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
         }
         h /= 6;
     }
@@ -331,12 +280,12 @@ function hsvToRgb(h, s, v){
     var t = v * (1 - (1 - f) * s);
 
     switch(i % 6){
-        case 0: r = v, g = t, b = p; break;
-        case 1: r = q, g = v, b = p; break;
-        case 2: r = p, g = v, b = t; break;
-        case 3: r = p, g = q, b = v; break;
-        case 4: r = t, g = p, b = v; break;
-        case 5: r = v, g = p, b = q; break;
+    case 0: r = v, g = t, b = p; break;
+    case 1: r = q, g = v, b = p; break;
+    case 2: r = p, g = v, b = t; break;
+    case 3: r = p, g = q, b = v; break;
+    case 4: r = t, g = p, b = v; break;
+    case 5: r = v, g = p, b = q; break;
     }
 
     return [r * 255, g * 255, b * 255];
@@ -348,7 +297,7 @@ function drawMatrix(tab) {
     var nb = tab.depute.length;
     for (var i = tab.links.length - 1; i >= 0; i--) {
     	for (var j = tab.links[i].length - 1; j >= 0; j--) {
-    		for (var k = tab.links[i][j].length - 1; k >= i; k--) {
+    	    for (var k = tab.links[i][j].length - 1; k >= i; k--) {
 
     		var link=tab.links[i][j][k];
 	    	var color = Math.floor(37.48*Math.log(link.value+1))/255;
@@ -360,11 +309,11 @@ function drawMatrix(tab) {
 
 	    	ctx.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
 	    	ctx.fillRect(x, y, 1, 1);
-	    	//ctx.fillRect(y, x, 1, 1);
+	    	ctx.fillRect(y, x, 1, 1);
 
 	    }
-	  }
 	}
+    }
     console.log("matrix drawn in : " +(Date.now()-chrono));
 }
 
