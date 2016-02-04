@@ -190,7 +190,7 @@ function mouseClicking(evt) {
 
      rxGlobal = canvas2.width/(dataGlobal.groups[groupIdX].end-dataGlobal.groups[groupIdX].begin);
      ryGlobal = canvas2.height/(dataGlobal.groups[groupIdY].end-dataGlobal.groups[groupIdY].begin);
-    console.log(rx+","+ry);
+    
     drawMatrix2(dataGlobal, rxGlobal, ryGlobal, groupIdX, groupIdY, ctx2);
 }
 
