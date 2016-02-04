@@ -97,7 +97,8 @@ pg.connect(connectionConfig, function(err, client, done) {
 			+"sim.similarity "
 			+"FROM similarity AS sim, deputes AS deputesA, deputes AS deputesB "
 			+"WHERE sim.id_depute_a=deputesA.id "
-			+"AND sim.id_depute_b=deputesB.id",
+			+"AND sim.id_depute_b=deputesB.id"
+			+"ORDER BY sim.id_depute_a",
 			function(err, result) {
 				if(err) {
 					return console.error('error running query', err);
