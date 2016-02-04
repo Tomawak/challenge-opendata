@@ -5,7 +5,7 @@ var chrono = Date.now();
 var mousePos;
 var dataGlobal;
 var GroupeEncadre;
-var marginWriting = 130; // in pixels
+var marginWriting = 143; // in pixels
 
 
 
@@ -76,7 +76,7 @@ function init() {
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    $.getJSON("similaritiesv2.json", function(data) {
+    $.getJSON("simv4.json", function(data) {
     	console.log("json loaded in : " +(Date.now()-chrono));
     	chrono = Date.now();
     	dataGlobal=data;
@@ -111,7 +111,7 @@ function differentGroupe(GroupeEncadre,groupX,groupY){
 	if (GroupeEncadre.endX!==groupX.end) {
 		return true ;
 	}
-	if (GroupeEncadre.endY!==groupX.end) {
+	if (GroupeEncadre.endY!==groupY.end) {
 		return true ;
 	}
 	return false;
@@ -201,18 +201,51 @@ function mouseClicking(evt) {
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
+  
   var firstX = tab.groups[parti1].begin;
   var firstY = tab.groups[parti2].begin;
 
-  for (var i = 0; i < tab.links[parti1][parti2].length; i++) {
-    var link = tab.links[parti1][parti2][i];
-    var x = link.source;
-    var y = link.target;
 
-    console.log("x ", x-firstX,"y ", y-firstY);
+
+  for (var i = tab.links[parti1][parti2].length-1; i >=0; i--) {
+    var link = tab.links[parti1][parti2][i];
+    
 
     var color = Math.floor(37.48*Math.log(link.value+1))/255;
     var colortab=hsvToRgb(0.3333,0,color);
+
+    var x = link.source;
+    var y = link.target;
+
+    context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
+
+    if (firstX > firstY) {
+      context.fillRect(x, y, 1, 1);
+      context.fillRect(y, x, 1, 1);
+    }else if (firstX < firstY) {
+
+    }else{
+      context.fillRect(x-firstX, y-firstY, rx, ry);
+      context.fillRect(y-firstY, x-firstX, ry, rx);
+    }
+
+  }
+/*
+  firstX = tab.groups[parti2].begin;
+  firstY = tab.groups[parti1].begin;
+
+
+
+  for (var i = tab.links[parti2][parti1].length-1; i >=0; i--) {
+    var link = tab.links[parti2][parti1][i];
+    
+
+    var color = Math.floor(37.48*Math.log(link.value+1))/255;
+    var colortab=hsvToRgb(0.3333,0,color);
+
+    var x = link.source;
+    var y = link.target;
+
     context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
 
     if (firstX > firstY) {
@@ -226,6 +259,30 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
     }
 
   }
+
+  var nb = tab.depute.length;
+    for (var i = tab.links.length - 1; i >= 0; i--) {
+        for (var j = tab.links[i].length - 1; j >= 0; j--) {
+            for (var k = tab.links[i][j].length - 1; k >= 0; k--) {
+                if ((i==parti1 && j==parti2)  ){
+            var link=tab.links[i][j][k];
+            var color = Math.floor(37.48*Math.log(link.value+1))/255;
+            var colortab=hsvToRgb(0.3333,0,color);
+
+
+            var x = link.source;
+            var y = link.target;
+
+            context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
+            context.fillRect(x, y, 1, 1);
+            context.fillRect(y, x, 1, 1);
+            }
+        }
+      }
+    }
+*/
+
+  
 }
 
 function getMousePos(canvas, evt) {
@@ -285,7 +342,7 @@ function drawMatrix(tab) {
     var nb = tab.depute.length;
     for (var i = tab.links.length - 1; i >= 0; i--) {
     	for (var j = tab.links[i].length - 1; j >= 0; j--) {
-    		for (var k = tab.links[i][j].length - 1; k >= 0; k--) {
+    		for (var k = tab.links[i][j].length - 1; k >= i; k--) {
 
     		var link=tab.links[i][j][k];
 	    	var color = Math.floor(37.48*Math.log(link.value+1))/255;
@@ -297,7 +354,7 @@ function drawMatrix(tab) {
 
 	    	ctx.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
 	    	ctx.fillRect(x, y, 1, 1);
-	    	ctx.fillRect(y, x, 1, 1);
+	    	//ctx.fillRect(y, x, 1, 1);
 
 	    }
 	  }
