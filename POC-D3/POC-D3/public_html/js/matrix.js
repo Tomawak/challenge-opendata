@@ -5,6 +5,44 @@ var chrono = Date.now();
 var mousePos;
 var dataGlobal;
 var GroupeEncadre;
+var marginWriting = 130; // in pixels
+
+
+function writeTopGroupName(context,group,color) {
+    context.save();
+    context.font="10px Arial";
+    context.textAlign = "start";
+    context.textBaseline= "middle";
+    context.fillStyle = color;
+    var middlePoint = group.begin+(group.end-group.begin)/2;
+    context.translate(middlePoint,-5);
+    context.rotate(-Math.PI/5);
+    context.clearRect(0,-6,500,10);
+    context.fillText(group.name, 0, 0);
+    context.restore();
+}
+
+function writeLeftGroupName(context,group,color) {
+    context.save();
+    context.font="10px Arial";
+    context.textAlign = "start";
+    context.textBaseline="middle";
+    context.fillStyle = color;
+    var middlePoint = group.begin+(group.end-group.begin)/2;
+    context.translate(575,middlePoint);
+    context.clearRect(0,-10,500,20);
+    context.fillText(group.name,0,0);
+    context.restore();
+}
+
+function writeGroupsName(context,groups) {
+    for (var i = groups.length - 1; i >= 0; i--) {
+        writeTopGroupName(context,groups[i],"black");
+    };
+    for (var i = groups.length - 1; i >= 0; i--) {
+        writeLeftGroupName(context,groups[i],"black");
+    };
+}
 
 function init() {
 
@@ -25,10 +63,12 @@ function init() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
     $.getJSON("similaritiesv2.json", function(data) {
-    	console.log("json charger " +(Date.now()-chrono));
+    	console.log("json loaded in : " +(Date.now()-chrono));
     	chrono = Date.now();
     	dataGlobal=data;
-    	drawMatrix(dataGlobal);
+        ctx.translate(0,marginWriting);
+        writeGroupsName(ctx,data.groups);
+        drawMatrix(dataGlobal);
     });
 }
 
@@ -64,17 +104,17 @@ function differentGroupe(GroupeEncadre,groupX,groupY){
 
 
 function changeColorRect(x,y,width,height,color){
-	var imgData=ctx.getImageData(x,y,width,height);
-	for (var i=0;i<imgData.data.length;i+=4) {
-
-		// CHANGER LA TRANSFORMATION DES COULEURS
-
-	  imgData.data[i]=255-imgData.data[i];
-	  imgData.data[i+1]=255-imgData.data[i+1];
-	  imgData.data[i+2]=255-imgData.data[i+2];
-	  imgData.data[i+3]=255;
-  }
-  ctx.putImageData(imgData,x,y);
+    var imgData=ctx.getImageData(x,y,1,1);
+    var colorHSV = rgbToHsv( imgData.data[0], imgData.data[1], imgData.data[2]);
+    if (color=="erase"){
+        colorHSV[1]=0;
+    } else if (color=="add"){
+        colorHSV[0]=0.333;
+        colorHSV[1]=1;
+    }
+    var colorRGB = hsvToRgb(colorHSV[0],colorHSV[1],colorHSV[2]);
+    ctx.fillStyle = "rgb("+colorRGB[0]+","+colorRGB[1]+","+colorRGB[2]+")";
+    ctx.fillRect(x, y, width, height);
 }
 
 function drawContour(GroupeEncadre,color){
@@ -92,48 +132,66 @@ function drawContour(GroupeEncadre,color){
 
 function mouseMoving(evt) {
     mousePos = getMousePos(canvas, evt);
-    console.log(mousePos.x, mousePos.y);
-    var groupX = dataGlobal.groups[findGroup(mousePos.x)];
-    var groupY = dataGlobal.groups[findGroup(mousePos.y)];
-    console.log(groupX);
+    var groupIdX = findGroup(mousePos.x);
+    var groupIdY = findGroup(mousePos.y);
+    var groupX = dataGlobal.groups[groupIdX];
+    var groupY = dataGlobal.groups[groupIdY];
     if (!GroupeEncadre) {
-	    	GroupeEncadre={"beginX":groupX.begin,
+	    GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
-	    drawContour(GroupeEncadre,"red");
+	    drawContour(GroupeEncadre,"add");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
-    	drawContour(GroupeEncadre,"noir");
+    	drawContour(GroupeEncadre,"erase");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
 	    };
-    	drawContour(GroupeEncadre,"red");
+        console.log("group selected : ",groupX.name.substring(0,5),groupY.name.substring(0,5))
+    	drawContour(GroupeEncadre,"add");
     }
 }
 
 function mouseClicking(evt) {
     // créer une nouvelle matrix uniquement pour le parti du député sélectionné
+    ctx2.clearRect(0,0,canvas2.width,canvas2.height);
+
+    var groupIdX = findGroup(mousePos.x);
+    var groupIdY = findGroup(mousePos.y);
+    var groupX = dataGlobal.groups[groupIdX];
+    var groupY = dataGlobal.groups[groupIdY];
     //ctx2.fillStyle = "#FF0000";
     //ctx2.fillRect(0, 0, 100, 100);
+    writeTopGroupName(ctx,groupX,"red");
+    writeLeftGroupName(ctx,groupY,"red");
 
-    drawMatrix2(dataGlobal, 1, 1, 1, 4, ctx2);
+    drawMatrix2(dataGlobal, 1, 1, groupIdX, groupIdY, ctx2);
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
-  var firstX = tab.links[parti1][parti2][0].source;
-  var firstY = tab.links[parti2][parti1][0].source;
+  //var firstX = tab.links[parti1][parti2][0].source;
+  //var firstY = tab.links[parti2][parti1][0].source;
+  var firstX = tab.groups[parti1].begin;
+  var firstY = tab.groups[parti2].begin;
+  console.log(firstX, firstY);
+  console.log("-----------------------");
+  //console.log(tab.links[parti1][parti2][2].target);
   for (var i = 0; i < tab.links[parti1][parti2].length; i++) {
     var link = tab.links[parti1][parti2][i];
     var x = link.source;
     var y = link.target;
 
-    var color = Math.floor(37.48*Math.log(link.value+1));
+    //console.log(x-firstX, y-firstY);
 
-    context.fillStyle = "rgb("+color+","+color+","+color+")";
-    context.fillRect(x-firstX, y-firstY, 15, 15);
+    var color = Math.floor(37.48*Math.log(link.value+1))/255;
+    var colortab=hsvToRgb(0.3333,0,color);
+
+    context.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
+    context.fillRect(x-firstX, y-firstY, 1, 1);
+    context.fillRect(y-firstY, x-firstX, 1, 1);
   }
 }
 
@@ -141,9 +199,54 @@ function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
     return {
     	x: evt.clientX - rect.left,
-    	y: evt.clientY - rect.top
+    	y: evt.clientY - rect.top - marginWriting
     };
 }
+
+function rgbToHsv(r, g, b){
+    r = r/255, g = g/255, b = b/255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, v = max;
+
+    var d = max - min;
+    s = max == 0 ? 0 : d / max;
+
+    if(max == min){
+        h = 0; // achromatic
+    }else{
+        switch(max){
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return [h, s, v];
+}
+
+function hsvToRgb(h, s, v){
+    var r, g, b;
+
+    var i = Math.floor(h * 6);
+    var f = h * 6 - i;
+    var p = v * (1 - s);
+    var q = v * (1 - f * s);
+    var t = v * (1 - (1 - f) * s);
+
+    switch(i % 6){
+        case 0: r = v, g = t, b = p; break;
+        case 1: r = q, g = v, b = p; break;
+        case 2: r = p, g = v, b = t; break;
+        case 3: r = p, g = q, b = v; break;
+        case 4: r = t, g = p, b = v; break;
+        case 5: r = v, g = p, b = q; break;
+    }
+
+    return [r * 255, g * 255, b * 255];
+}
+
+
 
 function drawMatrix(tab) {
     var nb = tab.depute.length;
@@ -152,19 +255,21 @@ function drawMatrix(tab) {
     		for (var k = tab.links[i][j].length - 1; k >= 0; k--) {
 
     		var link=tab.links[i][j][k];
-	    	var color = Math.floor(37.48*Math.log(link.value+1));
+	    	var color = Math.floor(37.48*Math.log(link.value+1))/255;
+	    	var colortab=hsvToRgb(0.3333,0,color);
+
 
 	    	var x = link.source;
 	    	var y = link.target;
 
-	    	ctx.fillStyle = "rgb("+color+","+color+","+color+")";
+	    	ctx.fillStyle = "rgb("+colortab[0]+","+colortab[1]+","+colortab[2]+")";
 	    	ctx.fillRect(x, y, 1, 1);
 	    	ctx.fillRect(y, x, 1, 1);
 
 	    }
 	  }
 	}
-    console.log("matrix draw " +(Date.now()-chrono));
+    console.log("matrix drawn in : " +(Date.now()-chrono));
 }
 
 
