@@ -132,13 +132,13 @@ function changeColorRect(x,y,width,height,color){
 function drawContour(GroupeEncadre,color){
 
 	//carre de gauche
-    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+    changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
 	//carre au dessus
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre en dessous
     changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
 	//carre de droite
-    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+    changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY-2,2,(GroupeEncadre.endY-GroupeEncadre.beginY)+4,color);
 
 }
 
