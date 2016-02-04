@@ -6,7 +6,8 @@ var mousePos;
 var dataGlobal;
 var GroupeEncadre;
 var marginWriting = 143; // in pixels
-
+var rxGlobal ;
+var ryGlobal ;
 
 
 var oldTopGroup = null;
@@ -187,7 +188,10 @@ function mouseClicking(evt) {
     var groupX = dataGlobal.groups[groupIdX];
     var groupY = dataGlobal.groups[groupIdY];
 
-    drawMatrix2(dataGlobal, 4, 1, groupIdX, groupIdY, ctx2);
+     rxGlobal = canvas2.width/(dataGlobal.groups[groupIdX].end-dataGlobal.groups[groupIdX].begin);
+     ryGlobal = canvas2.height/(dataGlobal.groups[groupIdY].end-dataGlobal.groups[groupIdY].begin);
+    console.log(rx+","+ry);
+    drawMatrix2(dataGlobal, rxGlobal, ryGlobal, groupIdX, groupIdY, ctx2);
 }
 
 function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
@@ -229,8 +233,8 @@ function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
             }
         }else{
             
-            context.fillRect(x-first1, y-first2, rx, ry);
-            context.fillRect(y-first2, x-first1, ry, rx);
+            context.fillRect((x-first1)*rx, (y-first2)*ry, rx, ry);
+            context.fillRect((y-first2)*rx, (x-first1)*ry, ry, rx);
         }
 
     }
