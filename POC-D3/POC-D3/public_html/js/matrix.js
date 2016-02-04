@@ -16,7 +16,7 @@ function init() {
 
     // mouse events
 
-   // canvas.addEventListener('mousemove', mouseMoving);
+    canvas.addEventListener('mousemove', mouseMoving);
 
     canvas.addEventListener('click', mouseClicking);
 
@@ -24,7 +24,7 @@ function init() {
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    $.getJSON("similarity.json", function(data) {
+    $.getJSON("similaritiesv2.json", function(data) {
     	console.log("json charger " +(Date.now()-chrono));
     	chrono = Date.now();
     	dataGlobal=data;
@@ -32,80 +32,109 @@ function init() {
     });
 }
 
-function findGroupX(x) {
-    dataGlobal.groups.forEach(function(group){
-        if (x<group.end && x>group.begin){
-            return x;
-        }
-    });
+function findGroup(x) {
+		for (var i = dataGlobal.groups.length - 1; i >= 0; i--) {
+			var group =dataGlobal.groups[i];
+			if ((x <= group.end) && (x >= group.begin)){
+          return i;
+      }
+		}
     console.log("error impossible");
+    console.log("----------------------------");
     return null;
 }
 
-function findGroupY(y) {
-    dataGlobal.groups.forEach(function(group){
-        if (y<group.end && y>group.begin){
-            return y;
-        }
-    });
-    console.log("error impossible");
-    return null;
 
-}
 
-function differentGroup(GroupeEncadre,groupX,groupY){
-	if (GroupeEncadre.beginX!=groupX.begin) {
+function differentGroupe(GroupeEncadre,groupX,groupY){
+	if (GroupeEncadre.beginX!==groupX.begin) {
 		return true ;
 	}
-	if (GroupeEncadre.beginY!=groupY.begin) {
+	if (GroupeEncadre.beginY!==groupY.begin) {
 		return true ;
 	}
-	if (GroupeEncadre.endX!=groupX.end) {
+	if (GroupeEncadre.endX!==groupX.end) {
 		return true ;
 	}
-	if (GroupeEncadre.endY!=groupX.end) {
+	if (GroupeEncadre.endY!==groupX.end) {
 		return true ;
 	}
 	return false;
 }
 
-function drawContour(GroupeEncadre){
-	ctx.fillStyle = "rgb("+color+","+color+","+color+")";
-  ctx.fillRect(x, y, 1, 1);
-  ctx.fillRect(y, x, 1, 1);
+
+function changeColorRect(x,y,width,height,color){
+	var imgData=ctx.getImageData(x,y,width,height);
+	for (var i=0;i<imgData.data.length;i+=4) {
+
+		// CHANGER LA TRANSFORMATION DES COULEURS
+
+	  imgData.data[i]=255-imgData.data[i];
+	  imgData.data[i+1]=255-imgData.data[i+1];
+	  imgData.data[i+2]=255-imgData.data[i+2];
+	  imgData.data[i+3]=255;
+  }
+  ctx.putImageData(imgData,x,y);
 }
 
-/*function mouseMoving(evt) {
+function drawContour(GroupeEncadre,color){
+
+	//carre de gauche
+	changeColorRect(GroupeEncadre.beginX-2,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+	//carre au dessus
+	changeColorRect(GroupeEncadre.beginX,GroupeEncadre.beginY-2,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
+	//carre en dessous
+	changeColorRect(GroupeEncadre.beginX,GroupeEncadre.endY,(GroupeEncadre.endX-GroupeEncadre.beginX),2,color);
+	//carre de droite
+	changeColorRect(GroupeEncadre.endX,GroupeEncadre.beginY,2,(GroupeEncadre.endY-GroupeEncadre.beginY),color);
+
+}
+
+function mouseMoving(evt) {
     mousePos = getMousePos(canvas, evt);
     console.log(mousePos.x, mousePos.y);
-    var groupX = dataGlobal.groups[findGroupX(mousPos.x)];
-    var groupY = dataGlobal.groups[findGroupX(mousPos.y)];
+    var groupX = dataGlobal.groups[findGroup(mousePos.x)];
+    var groupY = dataGlobal.groups[findGroup(mousePos.y)];
+    console.log(groupX);
     if (!GroupeEncadre) {
-
 	    	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
-	    }
-	    drawContour(GroupeEncadre);
-
+	    };
+	    drawContour(GroupeEncadre,"red");
     } else if (differentGroupe(GroupeEncadre,groupX,groupY)) {
-    	//on enleve le contour
+    	drawContour(GroupeEncadre,"noir");
     	GroupeEncadre={"beginX":groupX.begin,
 	    	"endX":groupX.end,
 	    	"beginY":groupY.begin,
 	    	"endY":groupY.end
-	    }
-    	//on dessine le contour
+	    };
+    	drawContour(GroupeEncadre,"red");
     }
-}*/
+}
 
 function mouseClicking(evt) {
     // créer une nouvelle matrix uniquement pour le parti du député sélectionné
-    ctx2.fillStyle = "#FF0000";
-    ctx2.fillRect(0, 0, 100, 100);
+    //ctx2.fillStyle = "#FF0000";
+    //ctx2.fillRect(0, 0, 100, 100);
 
+    drawMatrix2(dataGlobal, 1, 1, 1, 4, ctx2);
+}
 
+function drawMatrix2(tab, rx, ry, parti1, parti2, context) {
+  var firstX = tab.links[parti1][parti2][0].source;
+  var firstY = tab.links[parti2][parti1][0].source;
+  for (var i = 0; i < tab.links[parti1][parti2].length; i++) {
+    var link = tab.links[parti1][parti2][i];
+    var x = link.source;
+    var y = link.target;
+
+    var color = Math.floor(37.48*Math.log(link.value+1));
+
+    context.fillStyle = "rgb("+color+","+color+","+color+")";
+    context.fillRect(x-firstX, y-firstY, 15, 15);
+  }
 }
 
 function getMousePos(canvas, evt) {
@@ -119,17 +148,22 @@ function getMousePos(canvas, evt) {
 function drawMatrix(tab) {
     var nb = tab.depute.length;
     for (var i = tab.links.length - 1; i >= 0; i--) {
-    	var color = Math.floor(37.48*Math.log(tab.links[i].value+1));
+    	for (var j = tab.links[i].length - 1; j >= 0; j--) {
+    		for (var k = tab.links[i][j].length - 1; k >= 0; k--) {
 
-    	var x = tab.links[i].source;
-    	var y = tab.links[i].target;
-    	if (x<=y) {console.log("error");}
+    		var link=tab.links[i][j][k];
+	    	var color = Math.floor(37.48*Math.log(link.value+1));
 
-    	ctx.fillStyle = "rgb("+color+","+color+","+color+")";
-    	ctx.fillRect(x, y, 1, 1);
-    	ctx.fillRect(y, x, 1, 1);
+	    	var x = link.source;
+	    	var y = link.target;
 
-    }
+	    	ctx.fillStyle = "rgb("+color+","+color+","+color+")";
+	    	ctx.fillRect(x, y, 1, 1);
+	    	ctx.fillRect(y, x, 1, 1);
+
+	    }
+	  }
+	}
     console.log("matrix draw " +(Date.now()-chrono));
 }
 
