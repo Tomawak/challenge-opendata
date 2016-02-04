@@ -196,8 +196,8 @@ function mouseClicking(evt) {
     var groupY = dataGlobal.groups[groupIdY];
     //ctx2.fillStyle = "#FF0000";
     //ctx2.fillRect(0, 0, 100, 100);
-    writeTopGroupName(ctx,groupX,"red");
-    writeLeftGroupName(ctx,groupY,"red");
+    writeTopGroupName(ctx,groupX,"red",true);
+    writeRightGroupName(ctx,groupY,"red",true);
 
     drawMatrix2(dataGlobal, 1, 1, groupIdX, groupIdY, ctx2);
 }
