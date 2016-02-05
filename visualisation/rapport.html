@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>OpenData - Rapport</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="shortcut icon" href="">
+    </head>
+    <body>
+    <a href="https://github.com/thomas-bombrun/challenge-opendata"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png"></a>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="jumbotron">
+			    <h1>Rapport challenge Open Data</h1>
+
+			    <p><a href="/index.html">Lien vers la visualisation</a></p>
+
+				<p>Dans le cadre du Challenge Open Data nous avons choisi de réaliser une visualisation permettant de percevoir les proximités politiques des députés de l’Assemblée Nationale. Nous voulions mettre en évidence les logiques de groupes potentielles, les députés votant souvent a contre-courant de leurs groupes parlementaires, etc. Afin de rendre visible ces relations, nous avons affiché, dans un tableau à doubles entrées (une matrice de similarités), le nombre de votes communs entre les 577 députés de l'Assemblée nationale. Le tableau donne une vue globale des députés ordonnée par groupes parlementaires. L’interface proposée permet d’obtenir une vue centrée sur deux groupes parlementaires en particulier ainsi que d’identifier les députés qui constituent cette matrice.</p>
+
+				<h2>Source des données</h2>
+				<p>Notre source de données a été le <a href="http://data.assemblee-nationale.fr/">site</a> d’opendata de l’Assemblée Nationale. Nous avons notamment récupéré le <a href="http://data.assemblee-nationale.fr/travaux-parlementaires/votes">résultat de 1201 votes</a> de la XIVe législature (démarrée le 20 juin 2012) ainsi que le <a href="http://data.assemblee-nationale.fr/acteurs/deputes-en-exercice">jeu de données</a> répertoriant les députés de cette législature.</p>
+				<p>Ces données étaient disponibles sous formats JSON ou XML. Le choix d’utiliser les fichiers sous format JSON était d’abord motivé par la facilité d’exploration manuelle et est resté le choix le plus compatible avec le langages utilisé dans ce projet : le Javascript.</p>
+
+				<h2>Traitements des données</h2>
+				<p>Ces données brutes doivent alors être nettoyées et formatées afin de remplir notre base de données. Pour cela, nous avons développé des scripts Node.js. Ces scripts parcourent les json de données brutes et insèrent, à l’aide du plugin <a href="https://github.com/brianc/node-postgres">node-postgres</a>, les données dans une base PostgreSQL.</p>
+
+				<p>Une fois les données brutes insérées, il a fallu générer des tables de données induites de ces données brutes. En effet, les données brutes nous donnaient, pour chaque scrutin, le vote de tous les députés, mais nous avions besoin d’un score de similarité entre chaque paire de députés. Nous avons choisi de représenter cette similarité en calculant le  nombre de votes communs entre deux députés. Les similarités ainsi calculées sont insérées dans une nouvelle table de la base de données.</p>
+
+				<p>Puis, nous avons fait un script Node.js (toJson.js) qui parcoure notre base de données afin de recréer un nouveau fichier JSON.avec une structure adaptée à notre frontend. L’application finale en HTML récupérera les données de ce JSON.</p>
+			</div>
+		</div>
+	</div>
+    </body>
+</html>
